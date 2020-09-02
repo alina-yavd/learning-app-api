@@ -28,4 +28,14 @@ final class TestDTO
     {
         return $this->answers;
     }
+
+    public function getInfo(): array
+    {
+        return [
+            'word' => $this->getWord()->getInfo(),
+            'answers' => $this->getAnswers()->map(function ($item) {
+                return $item->getInfo();
+            }),
+        ];
+    }
 }

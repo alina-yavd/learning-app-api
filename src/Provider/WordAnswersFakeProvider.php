@@ -27,22 +27,14 @@ final class WordAnswersFakeProvider implements WordAnswersProviderInterface
         ));
     }
 
-    public function getList(): WordAnswers
+    public function getList($word_id = null): WordAnswers
     {
         $answers = [];
 
         for ($i = 0; $i < self::ANSWERS_COUNT; ++$i) {
-            $answers[] = $this->createAnswer($i + 1);
+            $answers[] = $this->getItem($i + 1);
         }
 
         return new WordAnswers(...$answers);
-    }
-
-    public function createAnswer(int $id): WordAnswerDTO
-    {
-        return new WordAnswerDTO($id, $this->faker->words(
-            $this->faker->numberBetween(1, 4),
-            true
-        ));
     }
 }

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
-use App\Collection\WordAnswers;
+use App\Collection\Words;
 use App\ViewModel\WordDTO;
+use App\ViewModel\WordGroupDTO;
 use Faker\Factory;
 use Faker\Generator;
 
 final class WordFakeProvider implements WordProviderInterface
 {
+    private const WORDS_COUNT = 50;
     private Generator $faker;
     private WordAnswersFakeProvider $answersProvider;
 
@@ -22,19 +24,29 @@ final class WordFakeProvider implements WordProviderInterface
 
     public function getItem(int $id): WordDTO
     {
+        $answers = $this->answersProvider->getList();
+
+        $groupId = rand(0, 1) ? $this->faker->numberBetween(1, 4) : null;
+        $group = $groupId ? new WordGroupDTO($id, $this->faker->words(
+            $this->faker->numberBetween(1, 2),
+            true
+        )) : null;
+
         return new WordDTO($id, $this->faker->words(
             $this->faker->numberBetween(1, 4),
             true
-        ));
+        ), $answers, $group);
     }
 
-    public function getAnswers(int $id)
+    public function getList(int $count = null): Words
     {
-        $answers[] = $this->answersProvider->createAnswer($id);
-        for ($i = 1; $i < $this->faker->numberBetween(1, 3); ++$i) {
-            $answers[] = $this->answersProvider->createAnswer($i + 1);
+        $words = [];
+        $count = $count ?? self::WORDS_COUNT;
+
+        for ($i = 0; $i < $count; ++$i) {
+            $words[] = $this->getItem($i + 1);
         }
 
-        return new WordAnswers(...$answers);
+        return new Words(...$words);
     }
 }

@@ -24,4 +24,12 @@ final class WordAnswerDTO
     {
         return $this->text;
     }
+
+    public function getInfo(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'text' => $this->getText(),
+        ];
+    }
 }

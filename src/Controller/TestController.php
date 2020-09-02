@@ -22,7 +22,7 @@ class TestController extends AbstractController
     }
 
     /**
-     * Get random word and it's answers list.
+     * Get random word and possible answers list.
      *
      * @Route("/api/test", methods={"GET"}, name="api_test")
      */
@@ -30,17 +30,7 @@ class TestController extends AbstractController
     {
         $test = $this->testProvider->getTest();
 
-        $json = [
-            'word' => [
-                'id' => $test->getWord()->getId(),
-                'text' => $test->getWord()->getText(),
-            ],
-            'answers' => $test->getAnswers()->map(function ($answer) {
-                return ['id' => $answer->getId(), 'text' => $answer->getText()];
-            }),
-        ];
-
-        $response = new JsonResponse($json);
+        $response = new JsonResponse($test->getInfo());
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         return $response;
@@ -71,12 +61,9 @@ class TestController extends AbstractController
         $result = $this->testProvider->checkAnswer($wordId, $answerId);
 
         $json = [
-            'word' => [
-                'id' => $word->getId(),
-                'text' => $word->getText(),
-            ],
-            'answers' => $answers->map(function ($answer) {
-                return ['id' => $answer->getId(), 'text' => $answer->getText()];
+            'word' => $word->getInfo(),
+            'answers' => $answers->map(function ($item) {
+                return $item->getInfo();
             }),
             'result' => $result,
         ];

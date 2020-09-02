@@ -29,7 +29,7 @@ final class TestFakeProvider implements TestProviderInterface
     public function checkAnswer($word_id, $answer_id): bool
     {
         $answer = $this->answersProvider->getItem($answer_id);
-        $answers = $this->wordProvider->getAnswers($word_id);
+        $answers = $this->answersProvider->getList($word_id);
 
         // randomly make answer correct
         if (rand(0, 1)) {
@@ -41,6 +41,6 @@ final class TestFakeProvider implements TestProviderInterface
 
     public function getCorrectAnswer($word_id)
     {
-        return $this->wordProvider->getAnswers($word_id);
+        return $this->answersProvider->getList($word_id);
     }
 }
