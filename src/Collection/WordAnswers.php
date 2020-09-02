@@ -30,4 +30,14 @@ final class WordAnswers implements \IteratorAggregate
 
         return $result;
     }
+
+    public function add(WordAnswerDTO $answer)
+    {
+        return array_unshift($this->answers, $answer);
+    }
+
+    public function contains($value, $strict = true)
+    {
+        return in_array($value, $this->answers, $strict);
+    }
 }

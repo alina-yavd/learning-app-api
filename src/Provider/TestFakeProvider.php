@@ -25,4 +25,22 @@ final class TestFakeProvider implements TestProviderInterface
 
         return new TestDTO($word, $answers);
     }
+
+    public function checkAnswer($word_id, $answer_id): bool
+    {
+        $answer = $this->answersProvider->getItem($answer_id);
+        $answers = $this->wordProvider->getAnswers($word_id);
+
+        // randomly make answer correct
+        if (rand(0, 1)) {
+            $answers->add($answer);
+        }
+
+        return $answers->contains($answer);
+    }
+
+    public function getCorrectAnswer($word_id)
+    {
+        return $this->wordProvider->getAnswers($word_id);
+    }
 }

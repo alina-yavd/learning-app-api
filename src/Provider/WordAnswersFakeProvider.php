@@ -19,6 +19,14 @@ final class WordAnswersFakeProvider implements WordAnswersProviderInterface
         $this->faker = Factory::create();
     }
 
+    public function getItem(int $id): WordAnswerDTO
+    {
+        return new WordAnswerDTO($id, $this->faker->words(
+            $this->faker->numberBetween(1, 4),
+            true
+        ));
+    }
+
     public function getList(): WordAnswers
     {
         $answers = [];
@@ -30,7 +38,7 @@ final class WordAnswersFakeProvider implements WordAnswersProviderInterface
         return new WordAnswers(...$answers);
     }
 
-    private function createAnswer(int $id): WordAnswerDTO
+    public function createAnswer(int $id): WordAnswerDTO
     {
         return new WordAnswerDTO($id, $this->faker->words(
             $this->faker->numberBetween(1, 4),
