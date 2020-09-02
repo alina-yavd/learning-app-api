@@ -20,6 +20,9 @@
     "doctrine/lexer": {
         "version": "1.2.1"
     },
+    "exsyst/swagger": {
+        "version": "v0.4.1"
+    },
     "friendsofphp/php-cs-fixer": {
         "version": "2.2",
         "recipe": {
@@ -32,11 +35,48 @@
             ".php_cs.dist"
         ]
     },
+    "fzaninotto/faker": {
+        "version": "v1.9.1"
+    },
+    "nelmio/api-doc-bundle": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "c8e0c38e1a280ab9e37587a8fa32b251d5bc1c94"
+        },
+        "files": [
+            "config/packages/nelmio_api_doc.yaml",
+            "config/routes/nelmio_api_doc.yaml"
+        ]
+    },
+    "nelmio/cors-bundle": {
+        "version": "1.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.5",
+            "ref": "6388de23860284db9acce0a7a5d9d13153bcb571"
+        },
+        "files": [
+            "config/packages/nelmio_cors.yaml"
+        ]
+    },
     "php": {
         "version": "7.4"
     },
     "php-cs-fixer/diff": {
         "version": "v1.3.0"
+    },
+    "phpdocumentor/reflection-common": {
+        "version": "2.2.0"
+    },
+    "phpdocumentor/reflection-docblock": {
+        "version": "5.2.1"
+    },
+    "phpdocumentor/type-resolver": {
+        "version": "1.3.0"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -153,6 +193,9 @@
     "symfony/process": {
         "version": "v5.1.4"
     },
+    "symfony/property-info": {
+        "version": "v5.1.4"
+    },
     "symfony/routing": {
         "version": "5.1",
         "recipe": {
@@ -184,5 +227,11 @@
     },
     "symfony/yaml": {
         "version": "v5.1.4"
+    },
+    "webmozart/assert": {
+        "version": "1.9.1"
+    },
+    "zircote/swagger-php": {
+        "version": "2.0.16"
     }
 }
