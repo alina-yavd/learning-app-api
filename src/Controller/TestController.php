@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Exception\ApiException;
-use App\Provider\TestProviderInterface;
-use App\Provider\WordProviderInterface;
+use App\Service\TestProviderInterface;
+use App\Service\WordProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,15 +22,29 @@ class TestController extends AbstractController
     }
 
     /**
-     * Get random word and possible answers list.
+     * Get random word and possible answers group.
      *
      * @Route("/api/test", methods={"GET"}, name="api_test")
      */
     public function index(): JsonResponse
     {
+        $response = new JsonResponse();
         $test = $this->testProvider->getTest();
 
-        $response = new JsonResponse($test->getInfo());
+        $json = [
+            'item' => [
+                'id' => $test->getWord()->getId(),
+                'text' => $test->getWord()->getText(),
+            ],
+            'items' => $test->getAnswers()->map(function ($item) {
+                return [
+                    'id' => $item->getId(),
+                    'text' => $item->getText(),
+                ];
+            }),
+        ];
+
+        $response->setData($json);
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         return $response;
@@ -39,7 +53,7 @@ class TestController extends AbstractController
     /**
      * Check if answer is correct.
      *
-     * @Route("/api/test/check", methods={"POST"}, name="api_test_check")
+     * @Route("/api/test", methods={"POST"}, name="api_test_check")
      */
     public function check(Request $request): JsonResponse
     {
@@ -51,7 +65,7 @@ class TestController extends AbstractController
 
         if (!$wordId || !$answerId) {
             $exception = new ApiException(406, 'Missing required parameters.');
-            $response->setContent(json_encode($exception->getErrorDetails()));
+            $response->setData($exception->getErrorDetails());
 
             return $response;
         }
@@ -68,7 +82,7 @@ class TestController extends AbstractController
             'result' => $result,
         ];
 
-        $response->setContent(json_encode($json));
+        $response->setData($json);
 
         return $response;
     }

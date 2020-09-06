@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Service;
 
 use App\Collection\Words;
 use App\ViewModel\WordDTO;

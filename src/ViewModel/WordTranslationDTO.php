@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-final class WordAnswerDTO
+final class WordTranslationDTO
 {
     private int $id;
     private string $text;
@@ -23,13 +23,5 @@ final class WordAnswerDTO
     public function getText(): string
     {
         return $this->text;
-    }
-
-    public function getInfo(): array
-    {
-        return [
-            'id' => $this->getId(),
-            'text' => $this->getText(),
-        ];
     }
 }

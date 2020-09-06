@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Provider\WordGroupProviderInterface;
-use App\Provider\WordProviderInterface;
+use App\Service\WordGroupsProviderInterface;
+use App\Service\WordProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,9 +11,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class WordController extends AbstractController
 {
     private WordProviderInterface $wordProvider;
-    private WordGroupProviderInterface $groupProvider;
+    private WordGroupsProviderInterface $groupProvider;
 
-    public function __construct(WordProviderInterface $wordProvider, WordGroupProviderInterface $groupProvider)
+    public function __construct(WordProviderInterface $wordProvider, WordGroupsProviderInterface $groupProvider)
     {
         $this->wordProvider = $wordProvider;
         $this->groupProvider = $groupProvider;
@@ -30,7 +30,11 @@ class WordController extends AbstractController
 
         $json = [
             'items' => $words->map(function ($item) {
-                return $item->getAnswersInfo();
+                return [
+                    'id' => $item->getId(),
+                    'text' => $item->getText(),
+                    'translations' => $item->getTranslations()->toArray(),
+                ];
             }),
         ];
 
@@ -51,12 +55,11 @@ class WordController extends AbstractController
 
         $json = [
             'items' => $groups->map(function ($item) {
-                return array_merge(
-                    $item->getInfo(),
-                    ['words' => $item->getWords()->map(function ($item) {
-                        return $item->getAnswersInfo();
-                    })]
-                );
+                return [
+                    'id' => $item->getId(),
+                    'name' => $item->getName(),
+                    'words' => $item->getWords()->toArray(),
+                ];
             }),
         ];
 

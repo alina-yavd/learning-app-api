@@ -31,9 +31,9 @@ final class Words implements \IteratorAggregate
         return $result;
     }
 
-    public function add(WordDTO $answer)
+    public function add(WordDTO $translation)
     {
-        return array_unshift($this->words, $answer);
+        return array_unshift($this->words, $translation);
     }
 
     public function contains($value, $strict = true)

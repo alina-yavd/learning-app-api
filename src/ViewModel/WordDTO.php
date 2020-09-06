@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Collection\WordAnswers;
+use Doctrine\Common\Collections\Collection;
 
 final class WordDTO
 {
     private int $id;
     private string $text;
-    private ?WordAnswers $answers;
-    private ?WordGroupDTO $group;
+    private ?Collection $translations;
+    private ?Collection $groups;
 
-    public function __construct(int $id, string $text, WordAnswers $answers = null, WordGroupDTO $group = null)
+    public function __construct(int $id, string $text, Collection $translations = null, Collection $groups = null)
     {
         $this->id = $id;
         $this->text = $text;
-        $this->answers = $answers;
-        $this->group = $group;
+        $this->translations = $translations;
+        $this->groups = $groups;
     }
 
     public function getId(): int
@@ -31,37 +31,17 @@ final class WordDTO
         return $this->text;
     }
 
-    public function getAnswers(): ?WordAnswers
+    public function getTranslations(): ?Collection
     {
-        return $this->answers;
-    }
-
-    public function getGroup(): ?WordGroupDTO
-    {
-        return $this->group;
-    }
-
-    public function getInfo(): array
-    {
-        return [
-            'id' => $this->getId(),
-            'text' => $this->getText(),
-        ];
-    }
-
-    public function getAnswersInfo(): array
-    {
-        $answersInfo = $this->getAnswers() ? $this->getAnswers()->map(function ($item) {
+        return $this->translations ? $this->translations->map(function ($item) {
             return $item->getInfo();
         }) : null;
-
-        return array_merge($this->getInfo(), ['answers' => $answersInfo]);
     }
 
-    public function getFullInfo(): array
+    public function getGroups(): ?Collection
     {
-        $fullInfo = ['group' => $this->getGroup() ? $this->getGroup()->getInfo() : null];
-
-        return array_merge($this->getAnswersInfo(), $fullInfo);
+        return $this->groups ? $this->groups->map(function ($item) {
+            return $item->getInfo();
+        }) : null;
     }
 }

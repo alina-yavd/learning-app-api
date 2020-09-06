@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Service;
 
 use App\ViewModel\TestDTO;
 
-final class TestFakeProvider implements TestProviderInterface
+final class TestFakeProvider
 {
     private WordProviderInterface $wordProvider;
-    private WordAnswersProviderInterface $answersProvider;
+    private WordTranslationsProviderInterface $answersProvider;
 
     public function __construct()
     {
         $this->wordProvider = new WordFakeProvider();
-        $this->answersProvider = new WordAnswersFakeProvider();
+        $this->answersProvider = new WordTranslationsFakeProvider();
     }
 
     public function getTest(): TestDTO
@@ -26,10 +26,10 @@ final class TestFakeProvider implements TestProviderInterface
         return new TestDTO($word, $answers);
     }
 
-    public function checkAnswer($word_id, $answer_id): bool
+    public function checkAnswer($wordId, $answerId): bool
     {
-        $answer = $this->answersProvider->getItem($answer_id);
-        $answers = $this->answersProvider->getList($word_id);
+        $answer = $this->answersProvider->getItem($answerId);
+        $answers = $this->answersProvider->getList($wordId);
 
         // randomly make answer correct
         if (rand(0, 1)) {
@@ -39,8 +39,8 @@ final class TestFakeProvider implements TestProviderInterface
         return $answers->contains($answer);
     }
 
-    public function getCorrectAnswer($word_id)
+    public function getCorrectAnswer($wordId)
     {
-        return $this->answersProvider->getList($word_id);
+        return $this->answersProvider->getList($wordId);
     }
 }

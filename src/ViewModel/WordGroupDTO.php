@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Collection\Words;
+use Doctrine\Common\Collections\Collection;
 
 final class WordGroupDTO
 {
     private int $id;
     private string $name;
-    private ?Words $words;
+    private ?Collection $words;
     private ?string $imageUrl;
 
-    public function __construct(int $id, string $name, Words $words = null, string $imageUrl = null)
+    public function __construct(int $id, string $name, Collection $words = null, string $imageUrl = null)
     {
         $this->id = $id;
         $this->name = 'Group '.$name;
@@ -31,22 +31,15 @@ final class WordGroupDTO
         return $this->name;
     }
 
-    public function getWords(): ?Words
+    public function getWords(): ?Collection
     {
-        return $this->words;
+        return $this->words ? $this->words->map(function ($item) {
+            return $item->getInfo();
+        }) : null;
     }
 
     public function getImageUrl(): ?string
     {
         return $this->imageUrl;
-    }
-
-    public function getInfo(): array
-    {
-        return [
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'image' => $this->getImageUrl(),
-        ];
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Service;
 
 use App\Collection\Words;
 use App\ViewModel\WordDTO;
@@ -10,21 +10,21 @@ use App\ViewModel\WordGroupDTO;
 use Faker\Factory;
 use Faker\Generator;
 
-final class WordFakeProvider implements WordProviderInterface
+final class WordFakeProvider
 {
     private const WORDS_COUNT = 50;
     private Generator $faker;
-    private WordAnswersFakeProvider $answersProvider;
+    private WordTranslationsFakeProvider $translationsProvider;
 
     public function __construct()
     {
         $this->faker = Factory::create();
-        $this->answersProvider = new WordAnswersFakeProvider();
+        $this->translationsProvider = new WordTranslationsFakeProvider();
     }
 
     public function getItem(int $id): WordDTO
     {
-        $answers = $this->answersProvider->getList();
+        $translations = $this->translationsProvider->getList();
 
         $groupId = rand(0, 1) ? $this->faker->numberBetween(1, 4) : null;
         $group = $groupId ? new WordGroupDTO($id, $this->faker->words(
@@ -35,7 +35,7 @@ final class WordFakeProvider implements WordProviderInterface
         return new WordDTO($id, $this->faker->words(
             $this->faker->numberBetween(1, 4),
             true
-        ), $answers, $group);
+        ), $translations, $group);
     }
 
     public function getList(int $count = null): Words

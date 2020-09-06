@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\WordGroupRepository;
+use App\ViewModel\WordGroupDTO;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass=WordGroupRepository::class)
+ */
+class WordGroup
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private ?int $id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $name;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Word::class, mappedBy="groups")
+     */
+    private Collection $words;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $imageUrl;
+
+    public function __construct()
+    {
+        $this->words = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Word[]
+     */
+    public function getWords(): Collection
+    {
+        return $this->words;
+    }
+
+    public function addWords(Word $words): self
+    {
+        if (!$this->words->contains($words)) {
+            $this->words[] = $words;
+            $words->addToGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWords(Word $words): self
+    {
+        if ($this->words->contains($words)) {
+            $this->words->removeElement($words);
+            $words->removeFromGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function getItem(): WordGroupDTO
+    {
+        return new WordGroupDTO(
+            $this->id,
+            $this->name,
+            $this->getWords(),
+            $this->imageUrl
+        );
+    }
+
+    public function getInfo(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'image' => $this->getImageUrl(),
+        ];
+    }
+}

@@ -31,9 +31,9 @@ final class WordGroups implements \IteratorAggregate
         return $result;
     }
 
-    public function add(WordGroupDTO $answer)
+    public function add(WordGroupDTO $translation)
     {
-        return array_unshift($this->groups, $answer);
+        return array_unshift($this->groups, $translation);
     }
 
     public function contains($value, $strict = true)

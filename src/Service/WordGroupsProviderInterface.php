@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Service;
 
 use App\Collection\WordGroups;
 use App\ViewModel\WordGroupDTO;
 
-interface WordGroupProviderInterface
+interface WordGroupsProviderInterface
 {
     public function getItem(int $id): WordGroupDTO;
 

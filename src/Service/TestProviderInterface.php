@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Service;
 
 use App\ViewModel\TestDTO;
 
 interface TestProviderInterface
 {
-    public function getTest(): TestDTO;
+    public function getTest(): ?TestDTO;
 }

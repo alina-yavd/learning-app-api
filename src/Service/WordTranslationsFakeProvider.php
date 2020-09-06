@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Provider;
+namespace App\Service;
 
-use App\Collection\WordAnswers;
-use App\ViewModel\WordAnswerDTO;
+use App\Collection\WordTranslations;
+use App\ViewModel\WordTranslationDTO;
 use Faker\Factory;
 use Faker\Generator;
 
-final class WordAnswersFakeProvider implements WordAnswersProviderInterface
+final class WordTranslationsFakeProvider
 {
-    private const ANSWERS_COUNT = 3;
+    private const ANSWERS_COUNT = 4;
     private Generator $faker;
 
     public function __construct()
@@ -19,15 +19,15 @@ final class WordAnswersFakeProvider implements WordAnswersProviderInterface
         $this->faker = Factory::create();
     }
 
-    public function getItem(int $id): WordAnswerDTO
+    public function getItem(int $id): WordTranslationDTO
     {
-        return new WordAnswerDTO($id, $this->faker->words(
+        return new WordTranslationDTO($id, $this->faker->words(
             $this->faker->numberBetween(1, 4),
             true
         ));
     }
 
-    public function getList($word_id = null): WordAnswers
+    public function getList($wordId = null): WordTranslations
     {
         $answers = [];
 
@@ -35,6 +35,6 @@ final class WordAnswersFakeProvider implements WordAnswersProviderInterface
             $answers[] = $this->getItem($i + 1);
         }
 
-        return new WordAnswers(...$answers);
+        return new WordTranslations(...$answers);
     }
 }
