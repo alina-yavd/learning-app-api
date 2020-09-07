@@ -6,10 +6,11 @@ namespace App\Service;
 
 use App\Collection\WordGroups;
 use App\Entity\WordGroup;
+use App\Exception\EntityNotFoundException;
 use App\Repository\WordGroupRepository;
 use App\ViewModel\WordGroupDTO;
 
-final class WordGroupProvider implements WordGroupsProviderInterface
+final class WordGroupProvider implements WordGroupProviderInterface
 {
     private WordGroupRepository $repository;
 
@@ -20,16 +21,20 @@ final class WordGroupProvider implements WordGroupsProviderInterface
 
     public function getItem(int $id): WordGroupDTO
     {
-        $wordGroup = $this->repository->find($id);
+        $item = $this->repository->find($id);
 
-        return $wordGroup->getItem();
+        if (null == $item) {
+            throw new EntityNotFoundException('Word group', $id);
+        }
+
+        return $item->getItem();
     }
 
     public function getList(): WordGroups
     {
-        $wordGroups = $this->repository->findAll();
+        $items = $this->repository->findAll();
 
-        $viewModels = \array_map(fn (WordGroup $wordGroup) => $wordGroup->getItem(), $wordGroups);
+        $viewModels = \array_map(fn (WordGroup $item) => $item->getItem(), $items);
 
         return new WordGroups(...$viewModels);
     }

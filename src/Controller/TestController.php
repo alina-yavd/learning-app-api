@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Exception\ApiException;
+use App\Exception\EntityNotFoundException;
 use App\Service\TestProviderInterface;
+use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,11 +16,13 @@ class TestController extends AbstractController
 {
     private TestProviderInterface $testProvider;
     private WordProviderInterface $wordProvider;
+    private WordGroupProviderInterface $groupProvider;
 
-    public function __construct(TestProviderInterface $testProvider, WordProviderInterface $wordProvider)
+    public function __construct(TestProviderInterface $testProvider, WordProviderInterface $wordProvider, WordGroupProviderInterface $groupProvider)
     {
         $this->testProvider = $testProvider;
         $this->wordProvider = $wordProvider;
+        $this->groupProvider = $groupProvider;
     }
 
     /**
@@ -26,17 +30,26 @@ class TestController extends AbstractController
      *
      * @Route("/api/test", methods={"GET"}, name="api_test")
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $response = new JsonResponse();
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+
+        $groupId = $request->query->get('groupId') ? (int) $request->query->get('groupId') : null;
+        if ($groupId) {
+            $group = $this->testProvider->setGroup($groupId);
+        } else {
+            $group = null;
+        }
+
         $test = $this->testProvider->getTest();
 
         $json = [
-            'item' => [
+            'word' => [
                 'id' => $test->getWord()->getId(),
                 'text' => $test->getWord()->getText(),
             ],
-            'items' => $test->getAnswers()->map(function ($item) {
+            'answers' => $test->getAnswers()->map(function ($item) {
                 return [
                     'id' => $item->getId(),
                     'text' => $item->getText(),
@@ -44,8 +57,14 @@ class TestController extends AbstractController
             }),
         ];
 
+        if (null !== $group) {
+            $json['group'] = [
+                'id' => $group->getId(),
+                'name' => $group->getName(),
+            ];
+        }
+
         $response->setData($json);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         return $response;
     }
@@ -70,15 +89,23 @@ class TestController extends AbstractController
             return $response;
         }
 
-        $word = $this->wordProvider->getItem($wordId);
-        $answers = $this->testProvider->getCorrectAnswer($wordId);
+        try {
+            $word = $this->wordProvider->getItem($wordId);
+        } catch (EntityNotFoundException $e) {
+            $exception = new ApiException(404, $e->getMessage());
+            $response->setData($exception->getErrorDetails());
+
+            return $response;
+        }
+
         $result = $this->testProvider->checkAnswer($wordId, $answerId);
 
         $json = [
-            'word' => $word->getInfo(),
-            'answers' => $answers->map(function ($item) {
-                return $item->getInfo();
-            }),
+            'word' => [
+                'id' => $word->getId(),
+                'text' => $word->getText(),
+                'translations' => $word->getTranslations()->toArray(),
+            ],
             'result' => $result,
         ];
 

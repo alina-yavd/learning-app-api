@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Collection\WordTranslations;
 use App\Entity\WordTranslation;
+use App\Exception\EntityNotFoundException;
 use App\Repository\WordTranslationRepository;
 use App\ViewModel\WordTranslationDTO;
 
@@ -20,26 +21,39 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
 
     public function getItem(int $id): WordTranslationDTO
     {
-        $translation = $this->repository->find($id);
+        $item = $this->repository->find($id);
 
-        return $translation->getItem();
+        if (null == $item) {
+            throw new EntityNotFoundException('Word translation', $id);
+        }
+
+        return $item->getItem();
     }
 
     public function getList(): WordTranslations
     {
-        $translations = $this->repository->findAll();
+        $items = $this->repository->findAll();
 
-        $viewModels = \array_map(fn (WordTranslation $translation) => $translation->getItem(), $translations);
+        $viewModels = \array_map(fn (WordTranslation $item) => $item->getItem(), $items);
+
+        return new WordTranslations(...$viewModels);
+    }
+
+    public function getItemsForWord($wordId): WordTranslations
+    {
+        $items = $this->repository->findBy(['word' => $wordId]);
+
+        $viewModels = \array_map(fn (WordTranslation $item) => $item->getItem(), $items);
 
         return new WordTranslations(...$viewModels);
     }
 
     public function getItemForWord($wordId): WordTranslationDTO
     {
-        $translations = $this->repository->findBy(['word' => $wordId]);
-        $key = \array_rand($translations);
+        $items = $this->repository->findBy(['word' => $wordId]);
+        $key = \array_rand($items);
 
-        return $translations[$key]->getItem();
+        return $items[$key]->getItem();
     }
 
     public function getListExcludingWord($wordId): WordTranslations
@@ -51,9 +65,9 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
             ->getQuery()
         ;
 
-        $translations = $qb->getResult();
+        $items = $qb->getResult();
 
-        $viewModels = \array_map(fn (WordTranslation $translation) => $translation->getItem(), $translations);
+        $viewModels = \array_map(fn (WordTranslation $item) => $item->getItem(), $items);
 
         return new WordTranslations(...$viewModels);
     }

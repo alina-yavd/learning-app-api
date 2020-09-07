@@ -7,7 +7,7 @@ namespace App\Service;
 use App\Collection\WordGroups;
 use App\ViewModel\WordGroupDTO;
 
-interface WordGroupsProviderInterface
+interface WordGroupProviderInterface
 {
     public function getItem(int $id): WordGroupDTO;
 

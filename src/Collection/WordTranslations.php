@@ -36,8 +36,15 @@ final class WordTranslations implements \IteratorAggregate
         return array_unshift($this->translations, $translation);
     }
 
-    public function contains($value, $strict = true)
+    public function contains($value, $strict = false)
     {
         return in_array($value, $this->translations, $strict);
+    }
+
+    public function shuffle()
+    {
+        \shuffle($this->translations);
+
+        return $this->translations;
     }
 }

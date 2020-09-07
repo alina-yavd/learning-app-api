@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\WordGroupsProviderInterface;
+use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,9 +11,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class WordController extends AbstractController
 {
     private WordProviderInterface $wordProvider;
-    private WordGroupsProviderInterface $groupProvider;
+    private WordGroupProviderInterface $groupProvider;
 
-    public function __construct(WordProviderInterface $wordProvider, WordGroupsProviderInterface $groupProvider)
+    public function __construct(WordProviderInterface $wordProvider, WordGroupProviderInterface $groupProvider)
     {
         $this->wordProvider = $wordProvider;
         $this->groupProvider = $groupProvider;
