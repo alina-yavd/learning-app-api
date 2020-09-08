@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8138e71d761cad606e015b60ff2eaa3e",
+    "content-hash": "de2996f12336e0d59c408915d0f5e02b",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -5109,7 +5109,7 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v5.1.4",
+            "version": "v5.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",

@@ -13,6 +13,7 @@ use App\ViewModel\WordTranslationDTO;
 final class WordTranslationsProvider implements WordTranslationsProviderInterface
 {
     private WordTranslationRepository $repository;
+    const TRANSLATIONS_COUNT = 3;
 
     public function __construct(WordTranslationRepository $translationRepository)
     {
@@ -56,19 +57,23 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
         return $items[$key]->getItem();
     }
 
-    // TODO: change to 3 random translations
     public function getListExcludingWord($wordId): WordTranslations
     {
         $qb = $this->repository
             ->createQueryBuilder('t')
             ->where('t.word != :word_id')
             ->setParameter('word_id', $wordId)
-            ->getQuery()
-        ;
+            ->getQuery();
 
         $items = $qb->getResult();
 
-        $viewModels = \array_map(fn (WordTranslation $item) => $item->getItem(), $items);
+        $viewModels = [];
+        for ($i = 0; $i < self::TRANSLATIONS_COUNT; ++$i) {
+            $randomKey = array_rand($items);
+            $randomItem = $items[$randomKey];
+            $viewModels[] = $randomItem->getItem();
+            unset($items[$randomKey]);
+        }
 
         return new WordTranslations(...$viewModels);
     }
