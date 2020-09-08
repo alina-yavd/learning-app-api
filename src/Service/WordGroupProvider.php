@@ -14,9 +14,9 @@ final class WordGroupProvider implements WordGroupProviderInterface
 {
     private WordGroupRepository $repository;
 
-    public function __construct(WordGroupRepository $wordGroupsRepository)
+    public function __construct(WordGroupRepository $wordGroupRepository)
     {
-        $this->repository = $wordGroupsRepository;
+        $this->repository = $wordGroupRepository;
     }
 
     public function getItem(int $id): WordGroupDTO
@@ -28,6 +28,11 @@ final class WordGroupProvider implements WordGroupProviderInterface
         }
 
         return $item->getItem();
+    }
+
+    public function getItemByName(string $name): ?WordGroup
+    {
+        return $this->repository->findOneBy(['name' => $name]);
     }
 
     public function getList(): WordGroups

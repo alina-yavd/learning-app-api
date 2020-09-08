@@ -56,6 +56,7 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
         return $items[$key]->getItem();
     }
 
+    // TODO: change to 3 random translations
     public function getListExcludingWord($wordId): WordTranslations
     {
         $qb = $this->repository
