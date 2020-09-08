@@ -11,7 +11,7 @@ final class Version20200904233333 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add word_list table.';
     }
 
     public function up(Schema $schema): void

@@ -11,7 +11,7 @@ final class Version20200905223513 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Cleanup, rename Lists to Groups.';
+        return 'Cleanup, rename word_lists to word_group.';
     }
 
     public function up(Schema $schema): void

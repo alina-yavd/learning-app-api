@@ -35,6 +35,12 @@ class Word
      */
     private Collection $groups;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Language::class, inversedBy="words")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private Language $language;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
@@ -111,6 +117,18 @@ class Word
         if ($this->groups->contains($group)) {
             $this->groups->removeElement($group);
         }
+
+        return $this;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): self
+    {
+        $this->language = $language;
 
         return $this;
     }

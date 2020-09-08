@@ -25,9 +25,14 @@ class WordTranslation
 
     /**
      * @ORM\ManyToOne(targetEntity=Word::class, inversedBy="translations")
-     * @ORM\JoinColumn(nullable=false)
      */
     private Word $word;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Language::class, inversedBy="translations")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private Language $language;
 
     public function getId(): ?int
     {
@@ -54,6 +59,18 @@ class WordTranslation
     public function setWord(Word $word): self
     {
         $this->word = $word;
+
+        return $this;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(Language $language): self
+    {
+        $this->language = $language;
 
         return $this;
     }
