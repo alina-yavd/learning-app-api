@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Uploader;
+namespace App\Service\WordsImport;
 
 use App\Entity\Language;
 use App\Entity\Word;
+use App\Entity\WordGroup;
 use App\Entity\WordTranslation;
 use App\Exception\UploadException;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 class WordsUploader implements WordsUploaderInterface
@@ -22,14 +22,10 @@ class WordsUploader implements WordsUploaderInterface
         $this->em = $entityManager;
     }
 
-    public function setLanguages(Language $originalLang, Language $translationLang)
+    public function upload(iterable $items, Language $originalLang, Language $translationLang, WordGroup $group = null): void
     {
         $this->originalLang = $originalLang;
         $this->translationLang = $translationLang;
-    }
-
-    public function upload($items, $group = null): void
-    {
         if (!$this->validateLang()) {
             throw new UploadException('Language not supported');
         }
