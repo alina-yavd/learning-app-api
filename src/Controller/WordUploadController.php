@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Exception\ApiException;
 use App\Exception\UploadException;
-use App\Service\Uploader\WordsUploaderFacade;
+use App\Service\WordsImporter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,9 +12,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WordUploadController extends AbstractController
 {
-    private WordsUploaderFacade $uploader;
+    private WordsImporter $uploader;
 
-    public function __construct(WordsUploaderFacade $uploader)
+    public function __construct(WordsImporter $uploader)
     {
         $this->uploader = $uploader;
     }
@@ -43,8 +43,7 @@ class WordUploadController extends AbstractController
         }
 
         try {
-            $this->uploader->setLanguages($originalCode, $translationCode);
-            $this->uploader->upload($file, $groupName);
+            $this->uploader->upload($file, $originalCode, $translationCode, $groupName);
         } catch (UploadException $e) {
             $exception = new ApiException(406, $e->getMessage());
             $response->setStatusCode(406);
