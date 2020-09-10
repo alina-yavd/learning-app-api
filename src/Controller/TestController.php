@@ -35,7 +35,8 @@ class TestController extends AbstractController
         $response = new JsonResponse();
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
-        $groupId = $request->query->get('groupId') ? (int) $request->query->get('groupId') : null;
+        // TODO: catch 'Entity "Word" with ID 2 not found.' exception
+        $groupId = $request->query->getInt('groupId');
         if ($groupId) {
             $group = $this->testProvider->setGroup($groupId);
         } else {
@@ -79,8 +80,8 @@ class TestController extends AbstractController
         $response = new JsonResponse();
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
-        $wordId = (int) $request->request->get('wordId') ?? null;
-        $answerId = (int) $request->request->get('answerId') ?? null;
+        $wordId = $request->request->getInt('wordId');
+        $answerId = $request->request->getInt('answerId');
 
         if (!$wordId || !$answerId) {
             $exception = new ApiException(406, 'Missing required parameters.');

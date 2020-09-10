@@ -8,14 +8,11 @@ use App\Entity\Language;
 use App\Entity\Word;
 use App\Entity\WordGroup;
 use App\Entity\WordTranslation;
-use App\Exception\UploadException;
 use Doctrine\ORM\EntityManagerInterface;
 
 class WordsUploader implements WordsUploaderInterface
 {
     private EntityManagerInterface $em;
-    private Language $originalLang;
-    private Language $translationLang;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -24,48 +21,51 @@ class WordsUploader implements WordsUploaderInterface
 
     public function upload(iterable $items, Language $originalLang, Language $translationLang, WordGroup $group = null): void
     {
-        $this->originalLang = $originalLang;
-        $this->translationLang = $translationLang;
-        if (!$this->validateLang()) {
-            throw new UploadException('Language not supported');
-        }
-
         foreach ($items as $item) {
             $word = $this->em->getRepository('App\Entity\Word')->findOneBy(['text' => (string) $item->word]);
 
-            if (null !== $word && null !== $group) {
-                $word = $this->em->getRepository('App\Entity\Word')->findOneBy(['text' => (string) $item->word]);
-                $word->addToGroup($group);
-                $this->em->persist($group);
-
-                continue;
+            if (null === $word) {
+                $word = new Word();
+                $word->setText((string) $item->word);
+                $word->setCreatedAt(new \DateTimeImmutable());
+                $word->setLanguage($originalLang);
             }
 
-            $word = new Word();
-            $word->setText((string) $item->word);
-//            $word->setAdded(new DateTime()); // TODO: add word property
-            $word->setLanguage($this->originalLang);
-
-            $translation = new WordTranslation();
-            $translation->setText((string) $item->translation);
-            $translation->setLanguage($this->translationLang);
-//            $translation->setAdded(new DateTime()); // TODO: add word translation property
-            $word->addTranslation($translation);
-
-            if (null !== $group) {
-                $word->addToGroup($group);
-                $this->em->persist($group);
-            }
-
-            $this->em->persist($translation);
+            $this->addWordToGroup($word, $group);
+            $this->addWordTranslation($word, $item->translation, $translationLang);
             $this->em->persist($word);
         }
 
         $this->em->flush();
     }
 
-    private function validateLang()
+    private function addWordToGroup($word, $group): void
     {
-        return null !== $this->originalLang && null !== $this->translationLang;
+        if (null === $group) {
+            return;
+        }
+
+        $word->addToGroup($group);
+        $word->setUpdatedAt(new \DateTimeImmutable());
+        $group->setUpdatedAt(new \DateTimeImmutable());
+        $this->em->persist($group);
+    }
+
+    private function addWordTranslation($word, $translationText, $translationLang)
+    {
+        $translation = $this->em->getRepository('App\Entity\WordTranslation')->findOneBy(['text' => (string) $translationText]);
+
+        if (null === $translation) {
+            $translation = new WordTranslation();
+            $translation->setText((string) $translationText);
+            $translation->setLanguage($translationLang);
+            $translation->setCreatedAt(new \DateTimeImmutable());
+            $this->em->persist($translation);
+        } else {
+            $translation->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        $word->addTranslation($translation);
+        $word->setUpdatedAt(new \DateTimeImmutable());
     }
 }

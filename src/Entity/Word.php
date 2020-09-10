@@ -27,6 +27,7 @@ class Word
 
     /**
      * @ORM\OneToMany(targetEntity=WordTranslation::class, mappedBy="word", orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private Collection $translations;
 
@@ -40,6 +41,16 @@ class Word
      * @ORM\JoinColumn(nullable=false)
      */
     private Language $language;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private \DateTimeImmutable $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private ?\DateTimeImmutable $updatedAt;
 
     public function __construct()
     {
@@ -133,6 +144,30 @@ class Word
         return $this;
     }
 
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
     public function getItem(): WordDTO
     {
         return new WordDTO(
@@ -149,23 +184,5 @@ class Word
             'id' => $this->getId(),
             'text' => $this->getText(),
         ];
-    }
-
-    public function getTranslationsInfo(): array
-    {
-        $translationsInfo = $this->getTranslations() ? $this->getTranslations()->map(function ($item) {
-            return $item->getInfo();
-        }) : null;
-
-        return array_merge($this->getInfo(), ['translations' => $translationsInfo]);
-    }
-
-    public function getFullInfo(): array
-    {
-        $fullInfo = ['groups' => $this->getGroups() ? $this->getGroups()->map(function ($item) {
-            return $item->getInfo();
-        }) : null];
-
-        return array_merge($this->getTranslationsInfo(), $fullInfo);
     }
 }

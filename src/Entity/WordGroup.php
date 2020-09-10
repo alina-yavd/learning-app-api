@@ -35,6 +35,16 @@ class WordGroup
      */
     private ?string $imageUrl;
 
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private \DateTimeImmutable $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private ?\DateTimeImmutable $updatedAt;
+
     public function __construct()
     {
         $this->words = new ArrayCollection();
@@ -97,6 +107,30 @@ class WordGroup
         return $this;
     }
 
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
     public function getItem(): WordGroupDTO
     {
         return new WordGroupDTO(
@@ -112,7 +146,6 @@ class WordGroup
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'image' => $this->getImageUrl(),
         ];
     }
 }

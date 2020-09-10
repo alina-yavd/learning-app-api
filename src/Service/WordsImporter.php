@@ -62,6 +62,7 @@ class WordsImporter
             if (null === $group) {
                 $group = new WordGroup();
                 $group->setName((string) $groupName);
+                $group->setCreatedAt(new \DateTimeImmutable());
                 $this->em->persist($group);
                 $this->em->flush();
             }

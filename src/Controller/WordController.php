@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Exception\ApiException;
+use App\Exception\EntityNotFoundException;
 use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class WordController extends AbstractController
@@ -64,6 +67,37 @@ class WordController extends AbstractController
         ];
 
         $response = new JsonResponse($json);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+
+        return $response;
+    }
+
+    /**
+     * Delete word group.
+     *
+     * @Route("/api/word/group/{id}", methods={"DELETE"}, name="api_word_group_delete")
+     */
+    public function groupDelete(int $id, Request $request): JsonResponse
+    {
+        $response = new JsonResponse();
+        $deleteWithData = $request->query->getBoolean('removeData');
+
+        try {
+            $this->groupProvider->removeItem((int) $id, $deleteWithData);
+        } catch (EntityNotFoundException $e) {
+            $exception = new ApiException(406, $e->getMessage());
+            $response->setStatusCode(406);
+            $response->setData($exception->getErrorDetails());
+
+            return $response;
+        }
+
+        $json = [
+            'status' => 'success',
+            'message' => 'Word list successfully deleted.',
+        ];
+
+        $response->setData($json);
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         return $response;
