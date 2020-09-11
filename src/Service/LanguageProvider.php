@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Collection\Languages;
 use App\Entity\Language;
 use App\Exception\EntityNotFoundException;
+use App\Exception\LanguageCreateException;
 use App\Repository\LanguageRepository;
 use App\ViewModel\LanguageDTO;
 
@@ -37,5 +38,18 @@ final class LanguageProvider implements LanguageProviderInterface
         $viewModels = \array_map(fn (Language $item) => $item->getItem(), $items);
 
         return new Languages(...$viewModels);
+    }
+
+    public function createItem(string $code, string $name): LanguageDTO
+    {
+        $item = $this->repository->findOneBy(['code' => $code]);
+
+        if (null !== $item) {
+            throw new LanguageCreateException(sprintf('Language with code "%s" already exists.', $code));
+        }
+
+        $item = $this->repository->create($code, $name);
+
+        return $item->getItem();
     }
 }

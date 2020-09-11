@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Language;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,8 +15,22 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class LanguageRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private EntityManagerInterface $em;
+
+    public function __construct(EntityManagerInterface $entityManager, ManagerRegistry $registry)
     {
         parent::__construct($registry, Language::class);
+        $this->em = $entityManager;
+    }
+
+    public function create($code, $name): Language
+    {
+        $language = new Language();
+        $language->setCode($code);
+        $language->setName($name);
+        $this->em->persist($language);
+        $this->em->flush();
+
+        return $language;
     }
 }
