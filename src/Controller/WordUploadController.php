@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Exception\ApiException;
 use App\Exception\UploadException;
 use App\Service\WordsImporter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,6 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WordUploadController extends AbstractController
 {
+    use JsonExit;
+
     private WordsImporter $uploader;
 
     public function __construct(WordsImporter $uploader)
@@ -27,7 +28,6 @@ class WordUploadController extends AbstractController
     public function index(Request $request): JsonResponse
     {
         $response = new JsonResponse();
-        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         $originalCode = $request->request->get('original');
         $translationCode = $request->request->get('translation');
@@ -35,21 +35,13 @@ class WordUploadController extends AbstractController
         $file = $request->files->get('file');
 
         if (!$originalCode || !$translationCode || empty($file)) {
-            $exception = new ApiException(406, 'Missing required parameters.');
-            $response->setStatusCode(406);
-            $response->setData($exception->getErrorDetails());
-
-            return $response;
+            return $this->errorExit($response, sprintf('Required parameters: %s.', implode(', ', ['original', 'translation', 'file'])));
         }
 
         try {
             $this->uploader->upload($file, $originalCode, $translationCode, $groupName);
         } catch (UploadException $e) {
-            $exception = new ApiException(406, $e->getMessage());
-            $response->setStatusCode(406);
-            $response->setData($exception->getErrorDetails());
-
-            return $response;
+            return $this->errorExit($response, $e->getMessage());
         }
 
         $json = [

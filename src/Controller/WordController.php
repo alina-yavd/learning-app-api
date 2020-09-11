@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Exception\ApiException;
 use App\Exception\EntityNotFoundException;
 use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
@@ -13,6 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WordController extends AbstractController
 {
+    use JsonExit;
+
     private WordProviderInterface $wordProvider;
     private WordGroupProviderInterface $groupProvider;
 
@@ -41,10 +42,7 @@ class WordController extends AbstractController
             }),
         ];
 
-        $response = new JsonResponse($json);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-
-        return $response;
+        return new JsonResponse($json);
     }
 
     /**
@@ -66,10 +64,7 @@ class WordController extends AbstractController
             }),
         ];
 
-        $response = new JsonResponse($json);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-
-        return $response;
+        return new JsonResponse($json);
     }
 
     /**
@@ -85,11 +80,7 @@ class WordController extends AbstractController
         try {
             $this->groupProvider->removeItem((int) $id, $deleteWithData);
         } catch (EntityNotFoundException $e) {
-            $exception = new ApiException(406, $e->getMessage());
-            $response->setStatusCode(406);
-            $response->setData($exception->getErrorDetails());
-
-            return $response;
+            return $this->errorExit($response, $e->getMessage());
         }
 
         $json = [
@@ -98,7 +89,6 @@ class WordController extends AbstractController
         ];
 
         $response->setData($json);
-        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         return $response;
     }

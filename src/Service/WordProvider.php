@@ -34,6 +34,20 @@ final class WordProvider implements WordProviderInterface
         return $item->getItem();
     }
 
+    public function getRandom(): ?WordDTO
+    {
+        $wordIds = $this->repository
+            ->createQueryBuilder('w')
+            ->select('w.id')
+            ->getQuery()
+            ->getResult();
+
+        $randomKey = array_rand($wordIds);
+        $word = $this->repository->find($wordIds[$randomKey]['id']);
+
+        return $word->getItem();
+    }
+
     public function getRandomItemInGroup(WordGroupDTO $group): WordDTO
     {
         $group = $this->groupRepository->find($group->getId());

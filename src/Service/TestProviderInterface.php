@@ -8,5 +8,5 @@ use App\ViewModel\TestDTO;
 
 interface TestProviderInterface
 {
-    public function getTest(): ?TestDTO;
+    public function getTest($group = null): ?TestDTO;
 }

@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Exception\EntityNotFoundException;
 use App\ViewModel\TestDTO;
 use App\ViewModel\WordDTO;
-use App\ViewModel\WordGroupDTO;
 
 final class TestProvider implements TestProviderInterface
 {
     private WordProviderInterface $wordProvider;
     private WordTranslationsProviderInterface $translationsProvider;
     private WordGroupProviderInterface $groupProvider;
-    private ?WordGroupDTO $group = null;
 
     public function __construct(WordProviderInterface $wordProvider, WordTranslationsProviderInterface $translationsProvider, WordGroupProviderInterface $groupProvider)
     {
@@ -23,21 +20,9 @@ final class TestProvider implements TestProviderInterface
         $this->groupProvider = $groupProvider;
     }
 
-    public function setGroup($groupId): ?WordGroupDTO
+    public function getTest($group = null): ?TestDTO
     {
-        try {
-            $group = $this->groupProvider->getItem($groupId);
-            $this->group = $group;
-        } catch (EntityNotFoundException $e) {
-            $this->group = null;
-        }
-
-        return $this->group;
-    }
-
-    public function getTest(): ?TestDTO
-    {
-        $word = $this->getWordWithAnswers();
+        $word = $this->getWordWithAnswers($group);
 
         $translation = $this->translationsProvider->getItemForWord($word->getId());
         $answers = $this->translationsProvider->getListExcludingWord($word->getId());
@@ -48,17 +33,16 @@ final class TestProvider implements TestProviderInterface
         return new TestDTO($word, $answers);
     }
 
-    private function getWordWithAnswers(): WordDTO
+    private function getWordWithAnswers($group): WordDTO
     {
-        if ($this->group) {
-            $word = $this->wordProvider->getRandomItemInGroup($this->group);
+        if ($group) {
+            $word = $this->wordProvider->getRandomItemInGroup($group);
         } else {
-            $id = \random_int(1, 4); // TODO: get words count from DB
-            $word = $this->wordProvider->getItem($id);
+            $word = $this->wordProvider->getRandom();
         }
 
         if (count($word->getTranslations()) < 1) {
-            return $this->getWordWithAnswers();
+            return $this->getWordWithAnswers($group);
         }
 
         return $word;

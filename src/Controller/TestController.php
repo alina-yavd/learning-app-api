@@ -2,18 +2,21 @@
 
 namespace App\Controller;
 
-use App\Exception\ApiException;
 use App\Exception\EntityNotFoundException;
 use App\Service\TestProviderInterface;
 use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Webmozart\Assert\Assert;
 
 class TestController extends AbstractController
 {
+    use JsonExit;
+
     private TestProviderInterface $testProvider;
     private WordProviderInterface $wordProvider;
     private WordGroupProviderInterface $groupProvider;
@@ -33,17 +36,20 @@ class TestController extends AbstractController
     public function index(Request $request): JsonResponse
     {
         $response = new JsonResponse();
-        $response->headers->set('Access-Control-Allow-Origin', '*');
 
-        // TODO: catch 'Entity "Word" with ID 2 not found.' exception
         $groupId = $request->query->getInt('groupId');
+
         if ($groupId) {
-            $group = $this->testProvider->setGroup($groupId);
+            try {
+                $group = $this->groupProvider->getItem($groupId);
+            } catch (EntityNotFoundException $e) {
+                return $this->errorExit($response, sprintf('Group %s not found.', $groupId));
+            }
         } else {
             $group = null;
         }
 
-        $test = $this->testProvider->getTest();
+        $test = $this->testProvider->getTest($group);
 
         $json = [
             'word' => [
@@ -78,25 +84,21 @@ class TestController extends AbstractController
     public function check(Request $request): JsonResponse
     {
         $response = new JsonResponse();
-        $response->headers->set('Access-Control-Allow-Origin', '*');
 
         $wordId = $request->request->getInt('wordId');
         $answerId = $request->request->getInt('answerId');
 
-        if (!$wordId || !$answerId) {
-            $exception = new ApiException(406, 'Missing required parameters.');
-            $response->setData($exception->getErrorDetails());
-
-            return $response;
+        try {
+            Assert::notEmpty($wordId);
+            Assert::notEmpty($answerId);
+        } catch (InvalidArgumentException $e) {
+            return $this->errorExit($response, sprintf('Required parameters: %s.', implode(', ', ['wordId', 'answerId'])));
         }
 
         try {
             $word = $this->wordProvider->getItem($wordId);
         } catch (EntityNotFoundException $e) {
-            $exception = new ApiException(404, $e->getMessage());
-            $response->setData($exception->getErrorDetails());
-
-            return $response;
+            return $this->errorExit($response, $e->getMessage());
         }
 
         $result = $this->testProvider->checkAnswer($wordId, $answerId);
