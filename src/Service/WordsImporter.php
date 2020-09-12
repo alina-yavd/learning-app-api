@@ -38,7 +38,7 @@ class WordsImporter
         $this->validateLang($originalLangCode, $translationLangCode);
 
         $filePath = $file->getRealPath();
-        $group = $this->getOrCreateGroup($groupName);
+        $group = $this->getOrCreateGroup($groupName, $this->originalLang, $this->translationLang);
 
         $strategy = $this->factory->getStrategy($file->getClientMimeType());
         $strategy->import($filePath, $this->originalLang, $this->translationLang, $group);
@@ -54,7 +54,7 @@ class WordsImporter
         }
     }
 
-    private function getOrCreateGroup($groupName)
+    private function getOrCreateGroup(string $groupName, Language $language, Language $translation)
     {
         if (null !== $groupName) {
             $group = $this->groupProvider->getItemByName((string) $groupName);
@@ -62,6 +62,8 @@ class WordsImporter
             if (null === $group) {
                 $group = new WordGroup();
                 $group->setName((string) $groupName);
+                $group->setLanguage($language);
+                $group->setTranslation($translation);
                 $group->setCreatedAt(new \DateTimeImmutable());
                 $this->em->persist($group);
                 $this->em->flush();

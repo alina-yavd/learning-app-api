@@ -40,10 +40,16 @@ class Language
      */
     private ?Collection $translations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=WordGroup::class, mappedBy="language")
+     */
+    private ?Collection $wordGroups;
+
     public function __construct()
     {
         $this->words = new ArrayCollection();
         $this->translations = new ArrayCollection();
+        $this->wordGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,6 +143,37 @@ class Language
         return $this;
     }
 
+    /**
+     * @return Collection|WordGroup[]
+     */
+    public function getWordGroups(): Collection
+    {
+        return $this->wordGroups;
+    }
+
+    public function addWordGroup(WordGroup $wordGroup): self
+    {
+        if (!$this->wordGroups->contains($wordGroup)) {
+            $this->wordGroups[] = $wordGroup;
+            $wordGroup->setLanguage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWordGroup(WordGroup $wordGroup): self
+    {
+        if ($this->wordGroups->contains($wordGroup)) {
+            $this->wordGroups->removeElement($wordGroup);
+            // set the owning side to null (unless already changed)
+            if ($wordGroup->getLanguage() === $this) {
+                $wordGroup->setLanguage(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getItem(): LanguageDTO
     {
         return new LanguageDTO(
@@ -144,5 +181,14 @@ class Language
             $this->code,
             $this->name
         );
+    }
+
+    public function getInfo(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'code' => $this->getCode(),
+            'name' => $this->getName(),
+        ];
     }
 }

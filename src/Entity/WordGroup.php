@@ -31,6 +31,18 @@ class WordGroup
     private Collection $words;
 
     /**
+     * @ORM\ManyToOne(targetEntity=Language::class, inversedBy="wordGroups")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private Language $language;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Language::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private Language $translation;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $imageUrl;
@@ -67,14 +79,26 @@ class WordGroup
         return $this;
     }
 
-    public function getImageUrl(): ?string
+    public function getLanguage(): Language
     {
-        return $this->imageUrl;
+        return $this->language;
     }
 
-    public function setImageUrl(?string $imageUrl): self
+    public function setLanguage(Language $language): self
     {
-        $this->imageUrl = $imageUrl;
+        $this->language = $language;
+
+        return $this;
+    }
+
+    public function getTranslation(): Language
+    {
+        return $this->translation;
+    }
+
+    public function setTranslation(Language $translation): self
+    {
+        $this->translation = $translation;
 
         return $this;
     }
@@ -103,6 +127,18 @@ class WordGroup
             $this->words->removeElement($words);
             $words->removeFromGroup($this);
         }
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }
@@ -136,6 +172,8 @@ class WordGroup
         return new WordGroupDTO(
             $this->id,
             $this->name,
+            $this->language,
+            $this->translation,
             $this->getWords(),
             $this->imageUrl
         );
@@ -146,6 +184,8 @@ class WordGroup
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
+            'language' => $this->getLanguage(),
+            'translation' => $this->getTranslation(),
         ];
     }
 }
