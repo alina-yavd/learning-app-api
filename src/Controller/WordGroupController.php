@@ -49,9 +49,12 @@ class WordGroupController extends AbstractController
      *
      * @Route("/api/group", methods={"GET"}, name="api_groups")
      */
-    public function groupList(): JsonResponse
+    public function groupList(Request $request): JsonResponse
     {
-        $groups = $this->groupProvider->getList();
+        $languageCode = $request->query->get('language');
+        $translationCode = $request->query->get('translation');
+
+        $groups = $this->groupProvider->getList(['language' => $languageCode, 'translation' => $translationCode]);
 
         $json = [
             'items' => $groups->map(function ($item) {

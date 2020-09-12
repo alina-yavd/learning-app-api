@@ -19,7 +19,7 @@ final class WordGroupDTO
     public function __construct(int $id, string $name, Language $language, Language $translation, Collection $words = null, string $imageUrl = null)
     {
         $this->id = $id;
-        $this->name = 'Group '.$name;
+        $this->name = $name;
         $this->language = $language;
         $this->translation = $translation;
         $this->words = $words;

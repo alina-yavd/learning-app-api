@@ -11,5 +11,5 @@ interface WordGroupProviderInterface
 {
     public function getItem(int $id): WordGroupDTO;
 
-    public function getList(): WordGroups;
+    public function getList(?array $filter): WordGroups;
 }
