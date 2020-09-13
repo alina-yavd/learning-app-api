@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Collection;
 
-use App\ViewModel\WordAnswerDTO;
+use App\ViewModel\LanguageDTO;
 
-final class WordAnswers implements \IteratorAggregate
+final class Languages implements \IteratorAggregate
 {
-    private array $answers;
+    private array $languages;
 
-    public function __construct(WordAnswerDTO ...$answers)
+    public function __construct(LanguageDTO ...$languages)
     {
-        $this->answers = $answers;
+        $this->languages = $languages;
     }
 
     public function getIterator(): iterable
     {
-        return new \ArrayIterator($this->answers);
+        return new \ArrayIterator($this->languages);
     }
 
     public function map(callable $fn)

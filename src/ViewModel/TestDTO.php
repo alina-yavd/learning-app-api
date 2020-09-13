@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\ViewModel;
 
-use App\Collection\WordAnswers;
+use App\Collection\WordTranslations;
 
 final class TestDTO
 {
     private WordDTO $word;
-    private WordAnswers $answers;
+    private WordTranslations $answers;
 
     public function __construct(
         WordDTO $word,
-        WordAnswers $answers
+        WordTranslations $answers
     ) {
         $this->word = $word;
         $this->answers = $answers;
@@ -24,7 +24,7 @@ final class TestDTO
         return $this->word;
     }
 
-    public function getAnswers(): WordAnswers
+    public function getAnswers(): WordTranslations
     {
         return $this->answers;
     }
