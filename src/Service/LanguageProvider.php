@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Collection\Languages;
@@ -48,7 +46,10 @@ final class LanguageProvider implements LanguageProviderInterface
             throw new LanguageCreateException(sprintf('Language with code "%s" already exists.', $code));
         }
 
-        $item = $this->repository->create($code, $name);
+        $language = new Language();
+        $language->setCode($code);
+        $language->setName($name);
+        $item = $this->repository->create($language);
 
         return $item->getItem();
     }

@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Language;
 use App\Exception\LanguageCreateException;
 use App\Service\LanguageProviderInterface;
+use App\ViewModel\LanguageDTO;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +34,7 @@ class LanguageController extends AbstractController
         $items = $this->languageProvider->getList();
 
         $json = [
-            'items' => $items->map(function ($item) {
+            'items' => $items->map(function (LanguageDTO $item) {
                 return [
                     'id' => $item->getId(),
                     'code' => $item->getCode(),

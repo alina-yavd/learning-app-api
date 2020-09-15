@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Entity\Language;
@@ -44,7 +42,7 @@ class WordsImporter
         $strategy->import($filePath, $this->originalLang, $this->translationLang, $group);
     }
 
-    private function validateLang($originalLangCode, $translationLangCode): void
+    private function validateLang(string $originalLangCode, string $translationLangCode): void
     {
         $this->originalLang = $this->em->getRepository('App\Entity\Language')->findOneBy(['code' => $originalLangCode]);
         $this->translationLang = $this->em->getRepository('App\Entity\Language')->findOneBy(['code' => $translationLangCode]);
@@ -65,12 +63,9 @@ class WordsImporter
                 $group->setLanguage($language);
                 $group->setTranslation($translation);
                 $group->setCreatedAt(new \DateTimeImmutable());
-                $this->em->persist($group);
-                $this->em->flush();
+                $this->em->getRepository('App\Entity\WordGroup')->create($group);
             }
         }
-
-        // $this->uploadGroupImage();
 
         return $group ?? null;
     }

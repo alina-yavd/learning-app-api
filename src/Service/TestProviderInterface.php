@@ -1,12 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\ViewModel\TestDTO;
+use App\ViewModel\WordGroupDTO;
 
 interface TestProviderInterface
 {
-    public function getTest($group = null): ?TestDTO;
+    public function getTest(?WordGroupDTO $group = null): ?TestDTO;
 }

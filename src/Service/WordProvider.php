@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Collection\Words;
@@ -36,14 +34,7 @@ final class WordProvider implements WordProviderInterface
 
     public function getRandom(): ?WordDTO
     {
-        $wordIds = $this->repository
-            ->createQueryBuilder('w')
-            ->select('w.id')
-            ->getQuery()
-            ->getResult();
-
-        $randomKey = array_rand($wordIds);
-        $word = $this->repository->find($wordIds[$randomKey]['id']);
+        $word = $this->repository->findOneRandom();
 
         return $word->getItem();
     }

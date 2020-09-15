@@ -18,4 +18,17 @@ class WordRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Word::class);
     }
+
+    public function findOneRandom()
+    {
+        $wordIds = $this
+            ->createQueryBuilder('w')
+            ->select('w.id')
+            ->getQuery()
+            ->getResult();
+
+        $randomKey = array_rand($wordIds);
+
+        return $this->find($wordIds[$randomKey]['id']);
+    }
 }

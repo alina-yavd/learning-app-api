@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\WordGroup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,8 +15,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class WordGroupRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private EntityManagerInterface $em;
+
+    public function __construct(EntityManagerInterface $entityManager, ManagerRegistry $registry)
     {
         parent::__construct($registry, WordGroup::class);
+        $this->em = $entityManager;
+    }
+
+    public function create(WordGroup $group): void
+    {
+        $this->em->persist($group);
+        $this->em->flush();
     }
 }

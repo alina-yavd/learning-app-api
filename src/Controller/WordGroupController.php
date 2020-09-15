@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Exception\EntityNotFoundException;
 use App\Service\WordGroupProviderInterface;
+use App\ViewModel\WordGroupDTO;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,7 @@ class WordGroupController extends AbstractController
         $groups = $this->groupProvider->getList();
 
         $json = [
-            'items' => $groups->map(function ($item) {
+            'items' => $groups->map(function (WordGroupDTO $item) {
                 return [
                     'id' => $item->getId(),
                     'name' => $item->getName(),
@@ -57,7 +58,7 @@ class WordGroupController extends AbstractController
         $groups = $this->groupProvider->getList(['language' => $languageCode, 'translation' => $translationCode]);
 
         $json = [
-            'items' => $groups->map(function ($item) {
+            'items' => $groups->map(function (WordGroupDTO $item) {
                 return [
                     'id' => $item->getId(),
                     'name' => $item->getName(),

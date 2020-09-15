@@ -1,9 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\ViewModel;
 
+use App\Entity\WordGroup;
+use App\Entity\WordTranslation;
 use Doctrine\Common\Collections\Collection;
 
 final class WordDTO
@@ -33,14 +33,14 @@ final class WordDTO
 
     public function getTranslations(): ?Collection
     {
-        return $this->translations ? $this->translations->map(function ($item) {
+        return $this->translations ? $this->translations->map(function (WordTranslation $item) {
             return $item->getInfo();
         }) : null;
     }
 
     public function getGroups(): ?Collection
     {
-        return $this->groups ? $this->groups->map(function ($item) {
+        return $this->groups ? $this->groups->map(function (WordGroup $item) {
             return $item->getInfo();
         }) : null;
     }

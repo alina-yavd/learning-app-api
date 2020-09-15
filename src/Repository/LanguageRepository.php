@@ -23,14 +23,9 @@ class LanguageRepository extends ServiceEntityRepository
         $this->em = $entityManager;
     }
 
-    public function create($code, $name): Language
+    public function create(Language $language): void
     {
-        $language = new Language();
-        $language->setCode($code);
-        $language->setName($name);
         $this->em->persist($language);
         $this->em->flush();
-
-        return $language;
     }
 }

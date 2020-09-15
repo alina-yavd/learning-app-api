@@ -1,11 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\ViewModel\TestDTO;
 use App\ViewModel\WordDTO;
+use App\ViewModel\WordGroupDTO;
 
 final class TestProvider implements TestProviderInterface
 {
@@ -20,7 +19,7 @@ final class TestProvider implements TestProviderInterface
         $this->groupProvider = $groupProvider;
     }
 
-    public function getTest($group = null): ?TestDTO
+    public function getTest(?WordGroupDTO $group = null): ?TestDTO
     {
         $word = $this->getWordWithAnswers($group);
 
@@ -33,7 +32,7 @@ final class TestProvider implements TestProviderInterface
         return new TestDTO($word, $answers);
     }
 
-    private function getWordWithAnswers($group): WordDTO
+    private function getWordWithAnswers(WordGroupDTO $group): WordDTO
     {
         if ($group) {
             $word = $this->wordProvider->getRandomItemInGroup($group);
@@ -48,7 +47,7 @@ final class TestProvider implements TestProviderInterface
         return $word;
     }
 
-    public function checkAnswer($wordId, $answerId): bool
+    public function checkAnswer(int $wordId, int $answerId): bool
     {
         $answer = $this->translationsProvider->getItem($answerId);
         $answers = $this->translationsProvider->getItemsForWord($wordId);

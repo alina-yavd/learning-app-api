@@ -6,6 +6,7 @@ use App\Exception\EntityNotFoundException;
 use App\Service\TestProviderInterface;
 use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
+use App\ViewModel\WordTranslationDTO;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,7 +57,7 @@ class TestController extends AbstractController
                 'id' => $test->getWord()->getId(),
                 'text' => $test->getWord()->getText(),
             ],
-            'answers' => $test->getAnswers()->map(function ($item) {
+            'answers' => $test->getAnswers()->map(function (WordTranslationDTO $item) {
                 return [
                     'id' => $item->getId(),
                     'text' => $item->getText(),

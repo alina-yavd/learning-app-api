@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Collection\WordGroups;
@@ -46,7 +44,7 @@ final class WordGroupProvider implements WordGroupProviderInterface
         return $this->repository->findOneBy(['name' => $name]);
     }
 
-    public function getList(?array $filter): WordGroups
+    public function getList(array $filter = []): WordGroups
     {
         $filterParams = $this->getFilterParams($filter);
         if (!empty($filterParams)) {
@@ -81,7 +79,7 @@ final class WordGroupProvider implements WordGroupProviderInterface
         $this->em->flush();
     }
 
-    private function getFilterParams($filter)
+    private function getFilterParams(?array $filter)
     {
         $filterParams = [];
 

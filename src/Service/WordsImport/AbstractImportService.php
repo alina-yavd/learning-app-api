@@ -2,6 +2,9 @@
 
 namespace App\Service\WordsImport;
 
+use App\Entity\Language;
+use App\Entity\WordGroup;
+
 abstract class AbstractImportService implements WordsImportServiceInterface
 {
     private WordsUploaderInterface $uploader;
@@ -18,7 +21,7 @@ abstract class AbstractImportService implements WordsImportServiceInterface
 
     abstract public function getData(string $filePath): ?iterable;
 
-    public function import($filePath, $originalLang, $translationLang, $group)
+    public function import(string $filePath, Language $originalLang, Language $translationLang, WordGroup $group)
     {
         $this->uploader->upload($this->getData($filePath), $originalLang, $translationLang, $group);
     }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Collection\WordTranslations;
@@ -40,7 +38,7 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
         return new WordTranslations(...$viewModels);
     }
 
-    public function getItemsForWord($wordId): WordTranslations
+    public function getItemsForWord(int $wordId): WordTranslations
     {
         $items = $this->repository->findBy(['word' => $wordId]);
 
@@ -49,7 +47,7 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
         return new WordTranslations(...$viewModels);
     }
 
-    public function getItemForWord($wordId): WordTranslationDTO
+    public function getItemForWord(int $wordId): WordTranslationDTO
     {
         $items = $this->repository->findBy(['word' => $wordId]);
         $key = \array_rand($items);
@@ -57,15 +55,9 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
         return $items[$key]->getItem();
     }
 
-    public function getListExcludingWord($wordId): WordTranslations
+    public function getListExcludingWord(int $wordId): WordTranslations
     {
-        $qb = $this->repository
-            ->createQueryBuilder('t')
-            ->where('t.word != :word_id')
-            ->setParameter('word_id', $wordId)
-            ->getQuery();
-
-        $items = $qb->getResult();
+        $items = $this->repository->findAllExcludingWord($wordId);
 
         $viewModels = [];
         for ($i = 0; $i < self::TRANSLATIONS_COUNT; ++$i) {
