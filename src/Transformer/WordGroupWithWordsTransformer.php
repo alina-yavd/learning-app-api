@@ -5,7 +5,7 @@ namespace App\Transformer;
 use App\ViewModel\WordGroupDTO;
 use League\Fractal\TransformerAbstract;
 
-class WordGroupWithWordsTransformer extends TransformerAbstract
+final class WordGroupWithWordsTransformer extends TransformerAbstract
 {
     public function transform(WordGroupDTO $group): array
     {

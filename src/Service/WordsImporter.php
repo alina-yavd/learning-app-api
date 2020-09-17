@@ -9,7 +9,7 @@ use App\Service\WordsImport\WordsImportFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class WordsImporter
+final class WordsImporter
 {
     private WordsImportFactory $factory;
     private EntityManagerInterface $em;

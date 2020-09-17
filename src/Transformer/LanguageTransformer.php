@@ -5,7 +5,7 @@ namespace App\Transformer;
 use App\ViewModel\LanguageDTO;
 use League\Fractal\TransformerAbstract;
 
-class LanguageTransformer extends TransformerAbstract
+final class LanguageTransformer extends TransformerAbstract
 {
     public function transform(LanguageDTO $language): array
     {

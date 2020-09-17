@@ -6,7 +6,7 @@ use App\ViewModel\TestDTO;
 use App\ViewModel\WordTranslationDTO;
 use League\Fractal\TransformerAbstract;
 
-class TestTransformer extends TransformerAbstract
+final class TestTransformer extends TransformerAbstract
 {
     public function transform(TestDTO $test): array
     {

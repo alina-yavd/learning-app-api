@@ -5,7 +5,7 @@ namespace App\Transformer;
 use App\ViewModel\WordDTO;
 use League\Fractal\TransformerAbstract;
 
-class WordTransformer extends TransformerAbstract
+final class WordTransformer extends TransformerAbstract
 {
     public function transform(WordDTO $word): array
     {

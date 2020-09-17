@@ -4,7 +4,7 @@ namespace App\Service\WordsImport;
 
 use SimpleXmlReader\SimpleXmlReader;
 
-class XmlImportService extends AbstractImportService implements WordsImportServiceInterface
+final class XmlImportService extends AbstractImportService implements WordsImportServiceInterface
 {
     protected array $fileTypes = ['application/xml', 'text/xml'];
 

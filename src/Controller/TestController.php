@@ -34,8 +34,8 @@ class TestController extends AbstractController
         TestProviderInterface $testProvider,
         WordProviderInterface $wordProvider,
         WordGroupProviderInterface $groupProvider,
-        Manager $manager)
-    {
+        Manager $manager
+    ) {
         $this->testProvider = $testProvider;
         $this->wordProvider = $wordProvider;
         $this->groupProvider = $groupProvider;
@@ -54,17 +54,12 @@ class TestController extends AbstractController
 
         $groupId = $request->query->getInt('groupId');
 
-        if ($groupId) {
-            try {
-                $group = $this->groupProvider->getItem($groupId);
-            } catch (EntityNotFoundException $e) {
-                return $this->errorExit($response, sprintf('Group %d not found.', $groupId));
-            }
-        } else {
-            $group = null;
+        try {
+            $test = $this->testProvider->getTest($groupId);
+        } catch (EntityNotFoundException $e) {
+            return $this->errorExit($response, $e->getMessage());
         }
 
-        $test = $this->testProvider->getTest($group);
         $data = new Item($test, new TestTransformer());
 
         return new JsonResponse($this->transformer->createData($data));

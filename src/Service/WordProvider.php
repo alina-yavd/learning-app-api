@@ -8,7 +8,6 @@ use App\Exception\EntityNotFoundException;
 use App\Repository\WordGroupRepository;
 use App\Repository\WordRepository;
 use App\ViewModel\WordDTO;
-use App\ViewModel\WordGroupDTO;
 
 final class WordProvider implements WordProviderInterface
 {
@@ -30,22 +29,6 @@ final class WordProvider implements WordProviderInterface
         }
 
         return $item->getItem();
-    }
-
-    public function getRandom(): ?WordDTO
-    {
-        $word = $this->repository->findOneRandom();
-
-        return $word->getItem();
-    }
-
-    public function getRandomItemInGroup(WordGroupDTO $group): WordDTO
-    {
-        $group = $this->groupRepository->find($group->getId());
-        $words = $group->getWords()->toArray();
-        $key = \array_rand($words);
-
-        return $words[$key]->getItem();
     }
 
     public function getList(): Words

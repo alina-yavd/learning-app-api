@@ -2,7 +2,7 @@
 
 namespace App\Service\WordsImport;
 
-class JsonImportService extends AbstractImportService implements WordsImportServiceInterface
+final class JsonImportService extends AbstractImportService implements WordsImportServiceInterface
 {
     protected array $fileTypes = ['application/json'];
 

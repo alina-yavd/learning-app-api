@@ -8,7 +8,7 @@ use App\Entity\WordGroup;
 use App\Entity\WordTranslation;
 use Doctrine\ORM\EntityManagerInterface;
 
-class WordsUploader implements WordsUploaderInterface
+final class WordsUploader implements WordsUploaderInterface
 {
     private EntityManagerInterface $em;
 

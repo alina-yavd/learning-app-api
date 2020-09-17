@@ -4,7 +4,7 @@ namespace App\Service\WordsImport;
 
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
-class WordsImportFactory implements WordsImportFactoryInterface
+final class WordsImportFactory implements WordsImportFactoryInterface
 {
     private ?ImportServicesCollection $services;
 

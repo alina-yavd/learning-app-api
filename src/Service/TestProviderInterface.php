@@ -3,9 +3,8 @@
 namespace App\Service;
 
 use App\ViewModel\TestDTO;
-use App\ViewModel\WordGroupDTO;
 
 interface TestProviderInterface
 {
-    public function getTest(?WordGroupDTO $group = null): ?TestDTO;
+    public function getTest(?int $groupId = null): ?TestDTO;
 }
