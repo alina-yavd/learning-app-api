@@ -4,101 +4,67 @@ namespace App\Controller;
 
 use App\Exception\EntityNotFoundException;
 use App\Service\WordGroupProviderInterface;
-use App\ViewModel\WordGroupDTO;
+use App\Transformer\WordGroupTransformer;
+use App\Transformer\WordGroupWithWordsTransformer;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/api/group")
+ */
 class WordGroupController extends AbstractController
 {
     use JsonExit;
 
     private WordGroupProviderInterface $groupProvider;
+    private Manager $transformer;
 
-    public function __construct(WordGroupProviderInterface $groupProvider)
+    public function __construct(WordGroupProviderInterface $groupProvider, Manager $manager)
     {
         $this->groupProvider = $groupProvider;
-    }
-
-    /**
-     * Get word groups list and it's words.
-     *
-     * @Route("/api/word/group", methods={"GET"}, name="api_word_groups")
-     */
-    public function groupListWithWords(): JsonResponse
-    {
-        $groups = $this->groupProvider->getList();
-
-        $json = [
-            'items' => $groups->map(function (WordGroupDTO $item) {
-                return [
-                    'id' => $item->getId(),
-                    'name' => $item->getName(),
-                    'language' => $item->getLanguage()->getInfo(),
-                    'translation' => $item->getTranslation()->getInfo(),
-                    'words' => $item->getWords()->toArray(),
-                ];
-            }),
-        ];
-
-        return new JsonResponse($json);
+        $this->transformer = $manager;
     }
 
     /**
      * Get word groups list without words.
      *
-     * @Route("/api/group", methods={"GET"}, name="api_groups")
+     * @Route(methods={"GET"})
      */
-    public function groupList(Request $request): JsonResponse
+    public function list(Request $request): JsonResponse
     {
         $languageCode = $request->query->get('language');
         $translationCode = $request->query->get('translation');
 
-        $groups = $this->groupProvider->getList(['language' => $languageCode, 'translation' => $translationCode]);
+        $items = $this->groupProvider->getList(['language' => $languageCode, 'translation' => $translationCode]);
+        $data = new Collection($items, new WordGroupTransformer());
 
-        $json = [
-            'items' => $groups->map(function (WordGroupDTO $item) {
-                return [
-                    'id' => $item->getId(),
-                    'name' => $item->getName(),
-                    'language' => $item->getLanguage()->getInfo(),
-                    'translation' => $item->getTranslation()->getInfo(),
-                ];
-            }),
-        ];
-
-        return new JsonResponse($json);
+        return new JsonResponse($this->transformer->createData($data));
     }
 
     /**
      * Get word group by id.
      *
-     * @Route("/api/group/{id}", methods={"GET"}, name="api_group")
+     * @Route("/{id}", methods={"GET"})
      */
-    public function groupItem(int $id): JsonResponse
+    public function view(int $id): JsonResponse
     {
         $item = $this->groupProvider->getItem($id);
+        $data = new Item($item, new WordGroupWithWordsTransformer());
 
-        $json = [
-            'item' => [
-                'id' => $item->getId(),
-                'name' => $item->getName(),
-                'language' => $item->getLanguage()->getInfo(),
-                'translation' => $item->getTranslation()->getInfo(),
-                'words' => $item->getWords()->toArray(),
-            ],
-        ];
-
-        return new JsonResponse($json);
+        return new JsonResponse($this->transformer->createData($data));
     }
 
     /**
      * Delete word group.
      *
-     * @Route("/api/group/{id}", methods={"DELETE"}, name="api_group_delete")
+     * @Route("/{id}", methods={"DELETE"})
      */
-    public function groupDelete(int $id, Request $request): JsonResponse
+    public function delete(int $id, Request $request): JsonResponse
     {
         $response = new JsonResponse();
         $deleteWithData = $request->query->getBoolean('removeData');

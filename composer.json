@@ -11,6 +11,7 @@
         "doctrine/doctrine-bundle": "^2.1",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.7",
+        "league/fractal": "^0.19.2",
         "nelmio/api-doc-bundle": "^3.0",
         "nelmio/cors-bundle": "^2.1",
         "suramon/simple-xml-reader": "^1.2",

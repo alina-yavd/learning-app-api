@@ -18,6 +18,7 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
+            - '../src/Transformer/'
             - '../src/Kernel.php'
             - '../src/Tests/'
 
@@ -36,3 +37,5 @@ services:
 
     App\Service\WordsImport\WordsImportFactory:
         arguments: [ !tagged_locator { tag: 'app.import_services_tag' } ]
+
+    League\Fractal\Manager: ~

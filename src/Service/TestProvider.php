@@ -29,10 +29,10 @@ final class TestProvider implements TestProviderInterface
         $answers->add($translation);
         $answers->shuffle();
 
-        return new TestDTO($word, $answers);
+        return new TestDTO($word, $answers, $group);
     }
 
-    private function getWordWithAnswers(WordGroupDTO $group): WordDTO
+    private function getWordWithAnswers(?WordGroupDTO $group): WordDTO
     {
         if ($group) {
             $word = $this->wordProvider->getRandomItemInGroup($group);
