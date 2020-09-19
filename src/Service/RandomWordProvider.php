@@ -7,6 +7,9 @@ use App\Repository\WordRepository;
 use App\ViewModel\WordDTO;
 use App\ViewModel\WordGroupDTO;
 
+/**
+ * Implements RandomWordProviderInterface for entities that are stored in database.
+ */
 final class RandomWordProvider implements RandomWordProviderInterface
 {
     private WordRepository $repository;
@@ -18,6 +21,9 @@ final class RandomWordProvider implements RandomWordProviderInterface
         $this->groupRepository = $groupRepository;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getItem(?WordGroupDTO $group): WordDTO
     {
         return $this->getWordWithAnswers($group);
@@ -38,14 +44,14 @@ final class RandomWordProvider implements RandomWordProviderInterface
         return $word;
     }
 
-    public function getRandom(): ?WordDTO
+    private function getRandom(): ?WordDTO
     {
         $word = $this->repository->findOneRandom();
 
         return $word->getItem();
     }
 
-    public function getRandomItemInGroup(WordGroupDTO $group): WordDTO
+    private function getRandomItemInGroup(WordGroupDTO $group): WordDTO
     {
         $group = $this->groupRepository->find($group->getId());
         $words = $group->getWords()->toArray();

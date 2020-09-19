@@ -44,7 +44,7 @@ class TestController extends AbstractController
     }
 
     /**
-     * Get random word and possible answers group.
+     * Get random word and possible answers.
      *
      * @Route(methods={"GET"})
      */

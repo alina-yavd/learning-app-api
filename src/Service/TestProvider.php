@@ -4,18 +4,21 @@ namespace App\Service;
 
 use App\ViewModel\TestDTO;
 
+/**
+ * Implements TestProviderInterface for entities that are stored in database.
+ */
 final class TestProvider implements TestProviderInterface
 {
     private WordProviderInterface $wordProvider;
     private WordTranslationsProviderInterface $translationsProvider;
     private WordGroupProviderInterface $groupProvider;
-    private RandomWordProvider $randomWordProvider;
+    private RandomWordProviderInterface $randomWordProvider;
 
     public function __construct(
         WordProviderInterface $wordProvider,
         WordTranslationsProviderInterface $translationsProvider,
         WordGroupProviderInterface $groupProvider,
-        RandomWordProvider $randomWordProvider
+        RandomWordProviderInterface $randomWordProvider
     ) {
         $this->wordProvider = $wordProvider;
         $this->translationsProvider = $translationsProvider;
@@ -23,6 +26,9 @@ final class TestProvider implements TestProviderInterface
         $this->randomWordProvider = $randomWordProvider;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTest(?int $groupId = null): ?TestDTO
     {
         if ($groupId) {
@@ -41,16 +47,14 @@ final class TestProvider implements TestProviderInterface
         return new TestDTO($word, $answers, $group);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function checkAnswer(int $wordId, int $answerId): bool
     {
         $answer = $this->translationsProvider->getItem($answerId);
         $answers = $this->translationsProvider->getItemsForWord($wordId);
 
         return $answers->contains($answer);
-    }
-
-    public function getCorrectAnswers($wordId)
-    {
-        return $this->translationsProvider->getItemsForWord($wordId);
     }
 }

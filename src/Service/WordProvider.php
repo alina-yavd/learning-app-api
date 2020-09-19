@@ -9,6 +9,9 @@ use App\Repository\WordGroupRepository;
 use App\Repository\WordRepository;
 use App\ViewModel\WordDTO;
 
+/**
+ * Implements WordProviderInterface for entities that are stored in database.
+ */
 final class WordProvider implements WordProviderInterface
 {
     private WordRepository $repository;
@@ -20,17 +23,23 @@ final class WordProvider implements WordProviderInterface
         $this->groupRepository = $groupRepository;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getItem(int $id): WordDTO
     {
         $item = $this->repository->find($id);
 
         if (null == $item) {
-            throw new EntityNotFoundException('Word', $id);
+            throw EntityNotFoundException::byId('Word', $id);
         }
 
         return $item->getItem();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getList(): Words
     {
         $items = $this->repository->findAll();

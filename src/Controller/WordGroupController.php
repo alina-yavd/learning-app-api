@@ -31,7 +31,7 @@ class WordGroupController extends AbstractController
     }
 
     /**
-     * Get word groups list without words.
+     * Get word groups list.
      *
      * @Route(methods={"GET"})
      */
@@ -60,7 +60,7 @@ class WordGroupController extends AbstractController
     }
 
     /**
-     * Delete word group.
+     * Delete word group by id.
      *
      * @Route("/{id}", methods={"DELETE"})
      */

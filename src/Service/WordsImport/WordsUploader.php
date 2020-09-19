@@ -8,6 +8,9 @@ use App\Entity\WordGroup;
 use App\Entity\WordTranslation;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Implements WordsUploaderInterface for entities that are stored in database.
+ */
 final class WordsUploader implements WordsUploaderInterface
 {
     private EntityManagerInterface $em;
@@ -17,6 +20,9 @@ final class WordsUploader implements WordsUploaderInterface
         $this->em = $entityManager;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function upload(iterable $items, Language $originalLang, Language $translationLang, WordGroup $group = null): void
     {
         foreach ($items as $item) {

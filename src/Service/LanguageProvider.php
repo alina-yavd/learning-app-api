@@ -9,6 +9,9 @@ use App\Exception\LanguageCreateException;
 use App\Repository\LanguageRepository;
 use App\ViewModel\LanguageDTO;
 
+/**
+ * Implements LanguageProviderInterface for entities that are stored in database.
+ */
 final class LanguageProvider implements LanguageProviderInterface
 {
     private LanguageRepository $repository;
@@ -18,17 +21,23 @@ final class LanguageProvider implements LanguageProviderInterface
         $this->repository = $languageRepository;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getItem(int $id): LanguageDTO
     {
         $item = $this->repository->find($id);
 
         if (null == $item) {
-            throw new EntityNotFoundException('Language', $id);
+            throw EntityNotFoundException::byId('Language', $id);
         }
 
         return $item->getItem();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getList(): Languages
     {
         $items = $this->repository->findAll();
@@ -38,6 +47,9 @@ final class LanguageProvider implements LanguageProviderInterface
         return new Languages(...$viewModels);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function createItem(string $code, string $name): LanguageDTO
     {
         $item = $this->repository->findOneBy(['code' => $code]);
@@ -49,8 +61,8 @@ final class LanguageProvider implements LanguageProviderInterface
         $language = new Language();
         $language->setCode($code);
         $language->setName($name);
-        $item = $this->repository->create($language);
+        $this->repository->create($language);
 
-        return $item->getItem();
+        return $language->getItem();
     }
 }

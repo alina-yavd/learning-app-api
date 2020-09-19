@@ -4,11 +4,16 @@ namespace App\Service;
 
 use App\Entity\Language;
 use App\Entity\WordGroup;
+use App\Exception\EntityNotFoundException;
 use App\Exception\UploadException;
 use App\Service\WordsImport\WordsImportFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Facade class for importing word lists.
+ * Use the upload() method to import new words and their translations.
+ */
 final class WordsImporter
 {
     private WordsImportFactory $factory;
@@ -27,16 +32,33 @@ final class WordsImporter
         $this->groupProvider = $groupProvider;
     }
 
+    /**
+     * Imports the words and translations from the given file.
+     * Uploaded files are not stored on the server.
+     *
+     * @param UploadedFile $file                File with words and translations in correct format.
+     *                                          Look for WordsImportServiceInterface implementations to know which file types are supported.
+     * @param string       $originalLangCode    original word language code
+     * @param string       $translationLangCode translations language code
+     * @param string|null  $groupName           (optional) Group name.
+     *                                          If the group with given name exists, associates new words with existing group.
+     *                                          If the group name is empty, words are imported, but not associated with any groups.
+     */
     public function upload(
         UploadedFile $file,
         string $originalLangCode,
         string $translationLangCode,
-        string $groupName = null
+        ?string $groupName = null
     ): void {
         $this->validateLang($originalLangCode, $translationLangCode);
 
         $filePath = $file->getRealPath();
-        $group = $this->getOrCreateGroup($groupName, $this->originalLang, $this->translationLang);
+
+        if (null !== $groupName) {
+            $group = $this->getOrCreateGroup($groupName, $this->originalLang, $this->translationLang);
+        } else {
+            $group = null;
+        }
 
         $strategy = $this->factory->getStrategy($file->getClientMimeType());
         $strategy->import($filePath, $this->originalLang, $this->translationLang, $group);
@@ -52,21 +74,30 @@ final class WordsImporter
         }
     }
 
-    private function getOrCreateGroup(string $groupName, Language $language, Language $translation)
+    private function getOrCreateGroup(string $groupName, Language $language, Language $translation): WordGroup
     {
-        if (null !== $groupName) {
-            $group = $this->groupProvider->getItemByName((string) $groupName);
-
-            if (null === $group) {
-                $group = new WordGroup();
-                $group->setName((string) $groupName);
-                $group->setLanguage($language);
-                $group->setTranslation($translation);
-                $group->setCreatedAt(new \DateTimeImmutable());
-                $this->em->getRepository('App\Entity\WordGroup')->create($group);
-            }
+        try {
+            $group = $this->groupProvider->getEntityByName((string) $groupName);
+        } catch (EntityNotFoundException $e) {
+            // do nothing
         }
 
-        return $group ?? null;
+        if (null === $group) {
+            $group = $this->createGroup($groupName, $language, $translation);
+        }
+
+        return $group;
+    }
+
+    private function createGroup($groupName, $language, $translation): WordGroup
+    {
+        $group = new WordGroup();
+        $group->setName($groupName);
+        $group->setLanguage($language);
+        $group->setTranslation($translation);
+        $group->setCreatedAt(new \DateTimeImmutable());
+        $this->em->getRepository('App\Entity\WordGroup')->create($group);
+
+        return $group;
     }
 }

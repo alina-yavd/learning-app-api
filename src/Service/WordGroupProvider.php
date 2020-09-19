@@ -12,6 +12,9 @@ use App\Repository\WordGroupRepository;
 use App\ViewModel\WordGroupDTO;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Implements WordGroupProviderInterface for entities that are stored in database.
+ */
 final class WordGroupProvider implements WordGroupProviderInterface
 {
     private EntityManagerInterface $em;
@@ -28,22 +31,44 @@ final class WordGroupProvider implements WordGroupProviderInterface
         $this->languageRepository = $languageRepository;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getItem(int $id): WordGroupDTO
     {
         $item = $this->repository->find($id);
 
         if (null === $item) {
-            throw new EntityNotFoundException('Word group', $id);
+            throw EntityNotFoundException::byId('Word group', $id);
         }
 
         return $item->getItem();
     }
 
-    public function getItemByName(string $name): ?WordGroup
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityByName(string $name): WordGroup
     {
-        return $this->repository->findOneBy(['name' => $name]);
+        $item = $this->repository->findOneBy(['name' => $name]);
+
+        if (null === $item) {
+            throw EntityNotFoundException::byName('Word group', $name);
+        }
+
+        return $item;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param ?array $filter associated array of filter data in the following format:
+     *                       [
+     *                       'language' => 'language_code',
+     *                       'translation' => 'translation_code'
+     *                       ]
+     *                       Non-existing languages are ignored
+     */
     public function getList(array $filter = []): WordGroups
     {
         $filterParams = $this->getFilterParams($filter);
@@ -58,12 +83,15 @@ final class WordGroupProvider implements WordGroupProviderInterface
         return new WordGroups(...$viewModels);
     }
 
-    public function removeItem(int $id, $deleteWithData = false)
+    /**
+     * {@inheritdoc}
+     */
+    public function removeItem(int $id, $deleteWithData = false): void
     {
         $item = $this->repository->find($id);
 
         if (null === $item) {
-            throw new EntityNotFoundException('Word group', $id);
+            throw EntityNotFoundException::byId('Word group', $id);
         }
 
         if ($deleteWithData) {
