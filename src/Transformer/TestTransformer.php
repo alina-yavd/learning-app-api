@@ -3,34 +3,39 @@
 namespace App\Transformer;
 
 use App\ViewModel\TestDTO;
-use App\ViewModel\WordTranslationDTO;
 use League\Fractal\TransformerAbstract;
 
 final class TestTransformer extends TransformerAbstract
 {
+    protected $defaultIncludes = ['word', 'answers', 'group'];
+
     public function transform(TestDTO $test): array
     {
-        $data = [
-            'word' => [
-                'id' => $test->getWord()->getId(),
-                'text' => $test->getWord()->getText(),
-            ],
-            'answers' => $test->getAnswers()->map(function (WordTranslationDTO $item) {
-                return [
-                    'id' => $item->getId(),
-                    'text' => $item->getText(),
-                ];
-            }),
-            'group' => null,
-        ];
+        return [];
+    }
 
+    public function includeWord(TestDTO $test)
+    {
+        $word = $test->getWord();
+
+        return $this->item($word, new WordTransformer());
+    }
+
+    public function includeAnswers(TestDTO $test)
+    {
+        $answers = $test->getAnswers();
+
+        return $this->collection($answers, new WordTranslationTransformer());
+    }
+
+    public function includeGroup(TestDTO $test)
+    {
         if (null !== $test->getGroup()) {
-            $data['group'] = [
-                'id' => $test->getGroup()->getId(),
-                'name' => $test->getGroup()->getName(),
-            ];
-        }
+            $group = $test->getGroup();
 
-        return $data;
+            return $this->item($group, new WordGroupTransformer());
+        } else {
+            return null;
+        }
     }
 }

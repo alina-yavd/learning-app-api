@@ -79,7 +79,7 @@ final class WordsImporter
         try {
             $group = $this->groupProvider->getEntityByName((string) $groupName);
         } catch (EntityNotFoundException $e) {
-            // do nothing
+            $group = null;
         }
 
         if (null === $group) {

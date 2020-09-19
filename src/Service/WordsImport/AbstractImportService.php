@@ -20,7 +20,7 @@ abstract class AbstractImportService implements WordsImportServiceInterface
     /**
      * Gets the supported file types for the strategy.
      */
-    protected function getSupportedTypes(): array
+    public function getSupportedTypes(): array
     {
         return $this->fileTypes;
     }
@@ -28,7 +28,7 @@ abstract class AbstractImportService implements WordsImportServiceInterface
     /**
      * Gets the words and translations data from the file.
      */
-    abstract protected function getData(string $filePath): ?iterable;
+    abstract public function getData(string $filePath): ?iterable;
 
     /**
      * {@inheritdoc}
