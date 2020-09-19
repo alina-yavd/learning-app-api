@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "734f71087d1bc9179113875c70a07ad2",
+    "content-hash": "f6e84dcd91cdf21889e2c4051dd0d220",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -5609,16 +5609,16 @@
         },
         {
             "name": "zircote/swagger-php",
-            "version": "2.0.16",
+            "version": "2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "a25c1bfe508e5f27d5f618648449593a79cbe406"
+                "reference": "fa686e0463203b68d4f497def2a5b3dde4abc8fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/a25c1bfe508e5f27d5f618648449593a79cbe406",
-                "reference": "a25c1bfe508e5f27d5f618648449593a79cbe406",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/fa686e0463203b68d4f497def2a5b3dde4abc8fd",
+                "reference": "fa686e0463203b68d4f497def2a5b3dde4abc8fd",
                 "shasum": ""
             },
             "require": {
@@ -5667,7 +5667,7 @@
                 "rest",
                 "service discovery"
             ],
-            "time": "2020-05-10T13:42:24+00:00"
+            "time": "2020-06-12T10:27:01+00:00"
         }
     ],
     "packages-dev": [
@@ -6203,8 +6203,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "zircote/swagger-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

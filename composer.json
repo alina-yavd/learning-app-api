@@ -30,8 +30,10 @@
         "friendsofphp/php-cs-fixer": "^2.16",
         "fzaninotto/faker": "^1.9",
         "symfony/maker-bundle": "^1.21",
-        "symfony/var-dumper": "5.1.*"
+        "symfony/var-dumper": "5.1.*",
+        "zircote/swagger-php": "2.x-dev"
     },
+    "minimum-stability": "dev",
     "config": {
         "optimize-autoloader": true,
         "preferred-install": {
