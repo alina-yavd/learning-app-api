@@ -72,7 +72,7 @@ class WordGroupController extends AbstractController
         try {
             $this->groupProvider->removeItem((int) $id, $deleteWithData);
         } catch (EntityNotFoundException $e) {
-            return $this->errorExit($response, $e->getMessage());
+            return $this->errorExit($response, $e->getMessage(), 404);
         }
 
         $json = [

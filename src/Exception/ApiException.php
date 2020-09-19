@@ -10,8 +10,7 @@ final class ApiException extends HttpException
     {
         return [
             'status' => 'error',
-            'code' => $this->getCode() ?? 404,
-            'message' => $this->getMessage() ?? 'Undefined API Exception',
+            'message' => $this->getMessage() ?? 'Undefined API Exception.',
         ];
     }
 }

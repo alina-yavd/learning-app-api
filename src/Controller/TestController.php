@@ -57,7 +57,7 @@ class TestController extends AbstractController
         try {
             $test = $this->testProvider->getTest($groupId);
         } catch (EntityNotFoundException $e) {
-            return $this->errorExit($response, $e->getMessage());
+            return $this->errorExit($response, $e->getMessage(), 404);
         }
 
         $data = new Item($test, new TestTransformer());
@@ -87,7 +87,7 @@ class TestController extends AbstractController
         try {
             $word = $this->wordProvider->getItem($wordId);
         } catch (EntityNotFoundException $e) {
-            return $this->errorExit($response, $e->getMessage());
+            return $this->errorExit($response, $e->getMessage(), 404);
         }
 
         $result = $this->testProvider->checkAnswer($wordId, $answerId);

@@ -14,6 +14,7 @@ trait JsonExit
     {
         $exception = new ApiException($code, $message);
         $response->setData($exception->getErrorDetails());
+        $response->setStatusCode($code);
 
         return $response;
     }
