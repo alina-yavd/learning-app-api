@@ -43,11 +43,6 @@ class WordGroup
     private Language $translation;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private ?string $imageUrl;
-
-    /**
      * @ORM\Column(type="datetime_immutable")
      */
     private \DateTimeImmutable $createdAt;
@@ -111,53 +106,11 @@ class WordGroup
         return $this->words;
     }
 
-    public function addWords(Word $words): self
-    {
-        if (!$this->words->contains($words)) {
-            $this->words[] = $words;
-            $words->addToGroup($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWords(Word $words): self
-    {
-        if ($this->words->contains($words)) {
-            $this->words->removeElement($words);
-            $words->removeFromGroup($this);
-        }
-
-        return $this;
-    }
-
-    public function getImageUrl(): ?string
-    {
-        return $this->imageUrl;
-    }
-
-    public function setImageUrl(?string $imageUrl): self
-    {
-        $this->imageUrl = $imageUrl;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
     }
 
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
@@ -174,8 +127,7 @@ class WordGroup
             $this->name,
             $this->language,
             $this->translation,
-            $this->getWords(),
-            $this->imageUrl
+            $this->getWords()
         );
     }
 

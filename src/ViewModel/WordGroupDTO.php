@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\ViewModel;
 
 use App\Entity\Language;
+use App\Entity\Word;
 use Doctrine\Common\Collections\Collection;
 
 final class WordGroupDTO
@@ -14,16 +13,14 @@ final class WordGroupDTO
     private Language $language;
     private Language $translation;
     private ?Collection $words;
-    private ?string $imageUrl;
 
-    public function __construct(int $id, string $name, Language $language, Language $translation, Collection $words = null, string $imageUrl = null)
+    public function __construct(int $id, string $name, Language $language, Language $translation, Collection $words = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->language = $language;
         $this->translation = $translation;
         $this->words = $words;
-        $this->imageUrl = $imageUrl;
     }
 
     public function getId(): int
@@ -38,7 +35,7 @@ final class WordGroupDTO
 
     public function getWords(): ?Collection
     {
-        return $this->words ? $this->words->map(function ($item) {
+        return $this->words ? $this->words->map(function (Word $item) {
             return $item->getInfo();
         }) : null;
     }
@@ -51,10 +48,5 @@ final class WordGroupDTO
     public function getTranslation(): Language
     {
         return $this->translation;
-    }
-
-    public function getImageUrl(): ?string
-    {
-        return $this->imageUrl;
     }
 }

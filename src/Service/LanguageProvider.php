@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Collection\Languages;
@@ -11,6 +9,9 @@ use App\Exception\LanguageCreateException;
 use App\Repository\LanguageRepository;
 use App\ViewModel\LanguageDTO;
 
+/**
+ * Implements LanguageProviderInterface for entities that are stored in database.
+ */
 final class LanguageProvider implements LanguageProviderInterface
 {
     private LanguageRepository $repository;
@@ -20,17 +21,23 @@ final class LanguageProvider implements LanguageProviderInterface
         $this->repository = $languageRepository;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getItem(int $id): LanguageDTO
     {
         $item = $this->repository->find($id);
 
         if (null == $item) {
-            throw new EntityNotFoundException('Language', $id);
+            throw EntityNotFoundException::byId('Language', $id);
         }
 
         return $item->getItem();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getList(): Languages
     {
         $items = $this->repository->findAll();
@@ -40,6 +47,9 @@ final class LanguageProvider implements LanguageProviderInterface
         return new Languages(...$viewModels);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function createItem(string $code, string $name): LanguageDTO
     {
         $item = $this->repository->findOneBy(['code' => $code]);
@@ -48,8 +58,11 @@ final class LanguageProvider implements LanguageProviderInterface
             throw new LanguageCreateException(sprintf('Language with code "%s" already exists.', $code));
         }
 
-        $item = $this->repository->create($code, $name);
+        $language = new Language();
+        $language->setCode($code);
+        $language->setName($name);
+        $this->repository->create($language);
 
-        return $item->getItem();
+        return $language->getItem();
     }
 }

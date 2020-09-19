@@ -33,17 +33,17 @@ class Language
     /**
      * @ORM\OneToMany(targetEntity=Word::class, mappedBy="language", orphanRemoval=true)
      */
-    private ?Collection $words;
+    private Collection $words;
 
     /**
      * @ORM\OneToMany(targetEntity=WordTranslation::class, mappedBy="language", orphanRemoval=true)
      */
-    private ?Collection $translations;
+    private Collection $translations;
 
     /**
      * @ORM\OneToMany(targetEntity=WordGroup::class, mappedBy="language")
      */
-    private ?Collection $wordGroups;
+    private Collection $wordGroups;
 
     public function __construct()
     {

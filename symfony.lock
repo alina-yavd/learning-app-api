@@ -114,6 +114,9 @@
     "laminas/laminas-zendframework-bridge": {
         "version": "1.1.0"
     },
+    "league/fractal": {
+        "version": "0.19.2"
+    },
     "nelmio/api-doc-bundle": {
         "version": "3.0",
         "recipe": {

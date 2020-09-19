@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service\WordsImport;
 
 use App\Entity\Language;
@@ -10,7 +8,10 @@ use App\Entity\WordGroup;
 use App\Entity\WordTranslation;
 use Doctrine\ORM\EntityManagerInterface;
 
-class WordsUploader implements WordsUploaderInterface
+/**
+ * Implements WordsUploaderInterface for entities that are stored in database.
+ */
+final class WordsUploader implements WordsUploaderInterface
 {
     private EntityManagerInterface $em;
 
@@ -19,6 +20,9 @@ class WordsUploader implements WordsUploaderInterface
         $this->em = $entityManager;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function upload(iterable $items, Language $originalLang, Language $translationLang, WordGroup $group = null): void
     {
         foreach ($items as $item) {
@@ -39,7 +43,7 @@ class WordsUploader implements WordsUploaderInterface
         $this->em->flush();
     }
 
-    private function addWordToGroup($word, $group): void
+    private function addWordToGroup(Word $word, WordGroup $group): void
     {
         if (null === $group) {
             return;
@@ -51,7 +55,7 @@ class WordsUploader implements WordsUploaderInterface
         $this->em->persist($group);
     }
 
-    private function addWordTranslation($word, $translationText, $translationLang)
+    private function addWordTranslation(Word $word, $translationText, $translationLang)
     {
         $translation = $this->em->getRepository('App\Entity\WordTranslation')->findOneBy(['text' => (string) $translationText]);
 

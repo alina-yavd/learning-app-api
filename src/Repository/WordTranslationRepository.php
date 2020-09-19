@@ -18,4 +18,15 @@ class WordTranslationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, WordTranslation::class);
     }
+
+    public function findAllExcludingWord(int $wordId): ?array
+    {
+        $qb = $this
+            ->createQueryBuilder('t')
+            ->where('t.word != :word_id')
+            ->setParameter('word_id', $wordId)
+            ->getQuery();
+
+        return $qb->getResult();
+    }
 }

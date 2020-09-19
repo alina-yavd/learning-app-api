@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/api/upload")
+ */
 class WordUploadController extends AbstractController
 {
     use JsonExit;
@@ -23,7 +26,7 @@ class WordUploadController extends AbstractController
     /**
      * Upload word list.
      *
-     * @Route("/api/upload", methods={"POST"}, name="api_words_upload")
+     * @Route(methods={"POST"})
      */
     public function index(Request $request): JsonResponse
     {

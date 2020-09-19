@@ -6,13 +6,21 @@ use App\Exception\EntityNotFoundException;
 use App\Service\TestProviderInterface;
 use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
+use App\Transformer\TestTransformer;
+use App\Transformer\WordTransformer;
 use InvalidArgumentException;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Item;
+use League\Fractal\Serializer\ArraySerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Webmozart\Assert\Assert;
 
+/**
+ * @Route("/api/test")
+ */
 class TestController extends AbstractController
 {
     use JsonExit;
@@ -20,66 +28,47 @@ class TestController extends AbstractController
     private TestProviderInterface $testProvider;
     private WordProviderInterface $wordProvider;
     private WordGroupProviderInterface $groupProvider;
+    private Manager $transformer;
 
-    public function __construct(TestProviderInterface $testProvider, WordProviderInterface $wordProvider, WordGroupProviderInterface $groupProvider)
-    {
+    public function __construct(
+        TestProviderInterface $testProvider,
+        WordProviderInterface $wordProvider,
+        WordGroupProviderInterface $groupProvider,
+        Manager $manager
+    ) {
         $this->testProvider = $testProvider;
         $this->wordProvider = $wordProvider;
         $this->groupProvider = $groupProvider;
+        $this->transformer = $manager;
+        $this->transformer->setSerializer(new ArraySerializer());
     }
 
     /**
-     * Get random word and possible answers group.
+     * Get random word and possible answers.
      *
-     * @Route("/api/test", methods={"GET"}, name="api_test")
+     * @Route(methods={"GET"})
      */
-    public function index(Request $request): JsonResponse
+    public function view(Request $request): JsonResponse
     {
         $response = new JsonResponse();
 
         $groupId = $request->query->getInt('groupId');
 
-        if ($groupId) {
-            try {
-                $group = $this->groupProvider->getItem($groupId);
-            } catch (EntityNotFoundException $e) {
-                return $this->errorExit($response, sprintf('Group %s not found.', $groupId));
-            }
-        } else {
-            $group = null;
+        try {
+            $test = $this->testProvider->getTest($groupId);
+        } catch (EntityNotFoundException $e) {
+            return $this->errorExit($response, $e->getMessage(), 404);
         }
 
-        $test = $this->testProvider->getTest($group);
+        $data = new Item($test, new TestTransformer());
 
-        $json = [
-            'word' => [
-                'id' => $test->getWord()->getId(),
-                'text' => $test->getWord()->getText(),
-            ],
-            'answers' => $test->getAnswers()->map(function ($item) {
-                return [
-                    'id' => $item->getId(),
-                    'text' => $item->getText(),
-                ];
-            }),
-        ];
-
-        if (null !== $group) {
-            $json['group'] = [
-                'id' => $group->getId(),
-                'name' => $group->getName(),
-            ];
-        }
-
-        $response->setData($json);
-
-        return $response;
+        return new JsonResponse($this->transformer->createData($data));
     }
 
     /**
      * Check if answer is correct.
      *
-     * @Route("/api/test", methods={"POST"}, name="api_test_check")
+     * @Route(methods={"POST"})
      */
     public function check(Request $request): JsonResponse
     {
@@ -98,17 +87,13 @@ class TestController extends AbstractController
         try {
             $word = $this->wordProvider->getItem($wordId);
         } catch (EntityNotFoundException $e) {
-            return $this->errorExit($response, $e->getMessage());
+            return $this->errorExit($response, $e->getMessage(), 404);
         }
 
         $result = $this->testProvider->checkAnswer($wordId, $answerId);
-
+        $wordData = new Item($word, new WordTransformer());
         $json = [
-            'word' => [
-                'id' => $word->getId(),
-                'text' => $word->getText(),
-                'translations' => $word->getTranslations()->toArray(),
-            ],
+            'word' => $this->transformer->createData($wordData),
             'result' => $result,
         ];
 

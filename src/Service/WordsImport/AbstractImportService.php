@@ -2,6 +2,12 @@
 
 namespace App\Service\WordsImport;
 
+use App\Entity\Language;
+use App\Entity\WordGroup;
+
+/**
+ * AbstractImportService implements general methods for words import services.
+ */
 abstract class AbstractImportService implements WordsImportServiceInterface
 {
     private WordsUploaderInterface $uploader;
@@ -11,14 +17,23 @@ abstract class AbstractImportService implements WordsImportServiceInterface
         $this->uploader = $uploader;
     }
 
+    /**
+     * Gets the supported file types for the strategy.
+     */
     public function getSupportedTypes(): array
     {
         return $this->fileTypes;
     }
 
+    /**
+     * Gets the words and translations data from the file.
+     */
     abstract public function getData(string $filePath): ?iterable;
 
-    public function import($filePath, $originalLang, $translationLang, $group)
+    /**
+     * {@inheritdoc}
+     */
+    public function import(string $filePath, Language $originalLang, Language $translationLang, WordGroup $group)
     {
         $this->uploader->upload($this->getData($filePath), $originalLang, $translationLang, $group);
     }
