@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Exception\LanguageCreateException;
-use App\Service\LanguageProviderInterface;
+use App\Exception\LanguageAlreadyExistsException;
+use App\Service\LanguageServiceInterface;
 use App\Transformer\LanguageTransformer;
 use InvalidArgumentException;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use League\Fractal\Resource\Item;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,14 +17,12 @@ use Webmozart\Assert\Assert;
 /**
  * @Route("/api/language", methods={"GET"}, name="api_language")
  */
-class LanguageController extends AbstractController
+class LanguageController extends ApiController
 {
-    use JsonExit;
-
-    private LanguageProviderInterface $languageProvider;
+    private LanguageServiceInterface $languageProvider;
     private Manager $transformer;
 
-    public function __construct(LanguageProviderInterface $languageProvider, Manager $manager)
+    public function __construct(LanguageServiceInterface $languageProvider, Manager $manager)
     {
         $this->languageProvider = $languageProvider;
         $this->transformer = $manager;
@@ -54,6 +52,8 @@ class LanguageController extends AbstractController
         $code = $request->request->get('code');
         $name = $request->request->get('name');
 
+        // TODO: validate via symfony/validator
+        // можно немного переделать логику валидации на уникальность, при создании нового языка
         try {
             Assert::notEmpty($code);
             Assert::length($code, 2);
@@ -63,17 +63,13 @@ class LanguageController extends AbstractController
         }
 
         try {
-            $this->languageProvider->createItem($code, $name);
-        } catch (LanguageCreateException $e) {
+            $language = $this->languageProvider->createItem($code, $name);
+        } catch (LanguageAlreadyExistsException $e) {
             return $this->errorExit($response, $e->getMessage());
         }
 
-        $json = [
-            'status' => 'success',
-            'message' => 'Language successfully created.',
-        ];
-
-        $response->setData($json);
+        $data = new Item($language, new LanguageTransformer());
+        $response->setData($this->transformer->createData($data));
 
         return $response;
     }

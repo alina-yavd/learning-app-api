@@ -9,7 +9,6 @@ use App\Transformer\WordGroupWithWordsTransformer;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/group")
  */
-class WordGroupController extends AbstractController
+class WordGroupController extends ApiController
 {
-    use JsonExit;
-
     private WordGroupProviderInterface $groupProvider;
     private Manager $transformer;
 

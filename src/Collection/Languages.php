@@ -17,15 +17,4 @@ final class Languages implements \IteratorAggregate
     {
         return new \ArrayIterator($this->languages);
     }
-
-    public function map(callable $fn)
-    {
-        $result = [];
-
-        foreach ($this as $item) {
-            $result[] = $fn($item);
-        }
-
-        return $result;
-    }
 }

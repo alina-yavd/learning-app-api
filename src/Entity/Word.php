@@ -52,10 +52,12 @@ class Word
      */
     private ?\DateTimeImmutable $updatedAt;
 
-    public function __construct()
+    public function __construct(string $text, Language $language)
     {
         $this->translations = new ArrayCollection();
         $this->groups = new ArrayCollection();
+        $this->text = $text;
+        $this->language = $language;
     }
 
     public function getId(): ?int
@@ -66,13 +68,6 @@ class Word
     public function getText(): string
     {
         return $this->text;
-    }
-
-    public function setText(string $text): self
-    {
-        $this->text = $text;
-
-        return $this;
     }
 
     /**
@@ -123,25 +118,9 @@ class Word
         return $this;
     }
 
-    public function removeFromGroup(WordGroup $group): self
-    {
-        if ($this->groups->contains($group)) {
-            $this->groups->removeElement($group);
-        }
-
-        return $this;
-    }
-
     public function getLanguage(): Language
     {
         return $this->language;
-    }
-
-    public function setLanguage(Language $language): self
-    {
-        $this->language = $language;
-
-        return $this;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

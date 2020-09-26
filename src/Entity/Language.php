@@ -20,6 +20,7 @@ class Language
      */
     private ?int $id;
 
+    // TODO: make code unique
     /**
      * @ORM\Column(type="string", length=2)
      */
@@ -45,11 +46,13 @@ class Language
      */
     private Collection $wordGroups;
 
-    public function __construct()
+    public function __construct(string $code, string $name)
     {
         $this->words = new ArrayCollection();
         $this->translations = new ArrayCollection();
         $this->wordGroups = new ArrayCollection();
+        $this->code = $code;
+        $this->name = $name;
     }
 
     public function getId(): ?int
@@ -62,23 +65,9 @@ class Language
         return $this->code;
     }
 
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
     public function getName(): ?string
     {
         return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     /**

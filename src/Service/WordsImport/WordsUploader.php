@@ -29,10 +29,8 @@ final class WordsUploader implements WordsUploaderInterface
             $word = $this->em->getRepository('App\Entity\Word')->findOneBy(['text' => (string) $item->word]);
 
             if (null === $word) {
-                $word = new Word();
-                $word->setText((string) $item->word);
+                $word = new Word((string) $item->word, $originalLang);
                 $word->setCreatedAt(new \DateTimeImmutable());
-                $word->setLanguage($originalLang);
             }
 
             $this->addWordToGroup($word, $group);

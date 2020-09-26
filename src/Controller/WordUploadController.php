@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Exception\UploadException;
 use App\Service\WordsImporter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,10 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/upload")
  */
-class WordUploadController extends AbstractController
+class WordUploadController extends ApiController
 {
-    use JsonExit;
-
     private WordsImporter $uploader;
 
     public function __construct(WordsImporter $uploader)

@@ -12,7 +12,6 @@ use InvalidArgumentException;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\ArraySerializer;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,10 +20,8 @@ use Webmozart\Assert\Assert;
 /**
  * @Route("/api/test")
  */
-class TestController extends AbstractController
+class TestController extends ApiController
 {
-    use JsonExit;
-
     private TestProviderInterface $testProvider;
     private WordProviderInterface $wordProvider;
     private WordGroupProviderInterface $groupProvider;
