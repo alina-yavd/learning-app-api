@@ -69,18 +69,15 @@ class WordGroupController extends ApiController
         $deleteWithData = $request->query->getBoolean('removeData');
 
         try {
-            $this->groupProvider->removeItem((int) $id, $deleteWithData);
+            if ($deleteWithData) {
+                $this->groupProvider->removeItemWithWords($id);
+            } else {
+                $this->groupProvider->removeItem($id);
+            }
         } catch (EntityNotFoundException $e) {
             return $this->errorExit($response, $e->getMessage(), 404);
         }
 
-        $json = [
-            'status' => 'success',
-            'message' => 'Word list successfully deleted.',
-        ];
-
-        $response->setData($json);
-
-        return $response;
+        return $this->successExit($response);
     }
 }

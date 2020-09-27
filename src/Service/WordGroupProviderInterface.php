@@ -41,9 +41,12 @@ interface WordGroupProviderInterface
 
     /**
      * Removes word group by id.
-     *
-     * @param bool $deleteWithData If true, the words from this group are also deleted.
-     *                             If the words are also associated with other word groups, they will not be deleted.
      */
-    public function removeItem(int $id, $deleteWithData = false): void;
+    public function removeItem(int $id): void;
+
+    /**
+     * Removes word group by id, the words from this group are also deleted.
+     * If the words are also associated with other word groups, they will not be deleted.
+     */
+    public function removeItemWithWords(int $id): void;
 }

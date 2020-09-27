@@ -58,18 +58,27 @@ final class WordGroupProvider implements WordGroupProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function removeItem(int $id, $deleteWithData = false): void
+    public function removeItem(int $id): void
     {
         $item = $this->repository->getById($id);
 
-        if ($deleteWithData) {
-            $words = $item->getWords();
-            $words->map(function (Word $word) {
-                if ($word->getGroups()->count() <= 1) {
-                    $this->em->remove($word);
-                }
-            });
-        }
+        $this->em->remove($item);
+        $this->em->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeItemWithWords(int $id): void
+    {
+        $item = $this->repository->getById($id);
+
+        $words = $item->getWords();
+        $words->map(function (Word $word) {
+            if ($word->getGroups()->count() <= 1) {
+                $this->em->remove($word);
+            }
+        });
 
         $this->em->remove($item);
         $this->em->flush();

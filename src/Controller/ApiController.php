@@ -11,6 +11,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 abstract class ApiController extends AbstractController
 {
+    protected function successExit(JsonResponse $response): JsonResponse
+    {
+        $response->setStatusCode(204);
+
+        return $response;
+    }
+
     protected function errorExit(JsonResponse $response, string $message, $code = 406): JsonResponse
     {
         $exception = new ApiException($code, $message);

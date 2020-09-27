@@ -8,7 +8,6 @@ use App\Transformer\LanguageTransformer;
 use InvalidArgumentException;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
-use League\Fractal\Resource\Item;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -63,14 +62,11 @@ class LanguageController extends ApiController
         }
 
         try {
-            $language = $this->languageProvider->createItem($code, $name);
+            $this->languageProvider->createItem($code, $name);
         } catch (LanguageAlreadyExistsException $e) {
             return $this->errorExit($response, $e->getMessage());
         }
 
-        $data = new Item($language, new LanguageTransformer());
-        $response->setData($this->transformer->createData($data));
-
-        return $response;
+        return $this->successExit($response);
     }
 }

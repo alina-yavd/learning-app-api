@@ -44,13 +44,6 @@ class WordUploadController extends ApiController
             return $this->errorExit($response, $e->getMessage());
         }
 
-        $json = [
-            'status' => 'success',
-            'message' => 'Word list successfully uploaded.',
-        ];
-
-        $response->setData($json);
-
-        return $response;
+        return $this->successExit($response);
     }
 }
