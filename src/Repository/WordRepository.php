@@ -31,13 +31,13 @@ class WordRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery();
 
-        $article = $query->getOneOrNullResult();
+        $item = $query->getOneOrNullResult();
 
-        if (null == $article) {
-            throw new EntityNotFoundException('Article', $id);
+        if (null == $item) {
+            throw EntityNotFoundException::byId('Word', $id);
         }
 
-        return $article;
+        return $item;
     }
 
     public function findOneRandom(): Word

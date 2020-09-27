@@ -8,14 +8,14 @@ use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
 use App\Transformer\TestTransformer;
 use App\Transformer\WordTransformer;
-use InvalidArgumentException;
+use App\ViewModel\TestCheckDTO;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\ArraySerializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Webmozart\Assert\Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/api/test")
@@ -26,18 +26,21 @@ class TestController extends ApiController
     private WordProviderInterface $wordProvider;
     private WordGroupProviderInterface $groupProvider;
     private Manager $transformer;
+    private ValidatorInterface $validator;
 
     public function __construct(
         TestProviderInterface $testProvider,
         WordProviderInterface $wordProvider,
         WordGroupProviderInterface $groupProvider,
-        Manager $manager
+        Manager $manager,
+        ValidatorInterface $validator
     ) {
         $this->testProvider = $testProvider;
         $this->wordProvider = $wordProvider;
         $this->groupProvider = $groupProvider;
         $this->transformer = $manager;
         $this->transformer->setSerializer(new ArraySerializer());
+        $this->validator = $validator;
     }
 
     /**
@@ -74,11 +77,11 @@ class TestController extends ApiController
         $wordId = $request->request->getInt('wordId');
         $answerId = $request->request->getInt('answerId');
 
-        try {
-            Assert::notEmpty($wordId);
-            Assert::notEmpty($answerId);
-        } catch (InvalidArgumentException $e) {
-            return $this->errorExit($response, sprintf('Required parameters: %s.', implode(', ', ['wordId', 'answerId'])));
+        $test = new TestCheckDTO($wordId, $answerId);
+
+        $errors = $this->validator->validate($test);
+        if (count($errors) > 0) {
+            return $this->errorExit($response, (string) $errors);
         }
 
         try {
