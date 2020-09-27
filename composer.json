@@ -8,6 +8,7 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "composer/package-versions-deprecated": "^1.11",
+        "doctrine/annotations": "^1.11@dev",
         "doctrine/doctrine-bundle": "^2.1",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.7",
@@ -24,6 +25,7 @@
         "symfony/http-foundation": "5.1.*",
         "symfony/mime": "5.1.*",
         "symfony/twig-bundle": "5.1.*",
+        "symfony/validator": "5.1.*",
         "symfony/yaml": "5.1.*"
     },
     "require-dev": {

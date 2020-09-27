@@ -2,7 +2,6 @@
 
 namespace App\ViewModel;
 
-// TODO: rename to LanguageListItem
 final class LanguageDTO
 {
     private int $id;

@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Collection\Languages;
 use App\Exception\LanguageAlreadyExistsException;
 use App\ViewModel\LanguageDTO;
+use InvalidArgumentException;
 
 /**
  * LanguageServiceInterface represents the interface for language service implementations.
@@ -23,7 +24,7 @@ interface LanguageServiceInterface
      *
      * @return LanguageDTO Language view model
      *
-     * @throws LanguageAlreadyExistsException
+     * @throws LanguageAlreadyExistsException | InvalidArgumentException
      */
     public function createItem(string $code, string $name): LanguageDTO;
 }

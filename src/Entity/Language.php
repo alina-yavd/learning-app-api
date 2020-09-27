@@ -7,9 +7,12 @@ use App\ViewModel\LanguageDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=LanguageRepository::class)
+ * @UniqueEntity("code")
  */
 class Language
 {
@@ -20,14 +23,15 @@ class Language
      */
     private ?int $id;
 
-    // TODO: make code unique
     /**
      * @ORM\Column(type="string", length=2)
+     * @Assert\Length(min = 2, max = 2)
      */
     private string $code;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private string $name;
 
