@@ -6,6 +6,8 @@ use App\Entity\Language;
 use App\Entity\WordGroup;
 use App\Exception\EntityNotFoundException;
 use App\Exception\UploadException;
+use App\Repository\LanguageRepository;
+use App\Repository\WordGroupRepository;
 use App\Service\WordsImport\WordsImportFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -19,17 +21,23 @@ final class WordsImporter
     private WordsImportFactory $factory;
     private EntityManagerInterface $em;
     private WordGroupProviderInterface $groupProvider;
+    private LanguageRepository $languageRepository;
+    private WordGroupRepository $groupRepository;
     private ?Language $originalLang;
     private ?Language $translationLang;
 
     public function __construct(
         WordsImportFactory $factory,
         EntityManagerInterface $em,
-        WordGroupProviderInterface $groupProvider
+        WordGroupProviderInterface $groupProvider,
+        LanguageRepository $languageRepository,
+        WordGroupRepository $groupRepository
     ) {
         $this->factory = $factory;
         $this->em = $em;
         $this->groupProvider = $groupProvider;
+        $this->languageRepository = $languageRepository;
+        $this->groupRepository = $groupRepository;
     }
 
     /**
@@ -66,8 +74,8 @@ final class WordsImporter
 
     private function validateLang(string $originalLangCode, string $translationLangCode): void
     {
-        $this->originalLang = $this->em->getRepository('App\Entity\Language')->findOneBy(['code' => $originalLangCode]);
-        $this->translationLang = $this->em->getRepository('App\Entity\Language')->findOneBy(['code' => $translationLangCode]);
+        $this->originalLang = $this->languageRepository->findOneBy(['code' => $originalLangCode]);
+        $this->translationLang = $this->languageRepository->findOneBy(['code' => $translationLangCode]);
 
         if (null === $this->originalLang || null === $this->translationLang) {
             throw new UploadException('Languages not supported.');
@@ -96,7 +104,7 @@ final class WordsImporter
         $group->setLanguage($language);
         $group->setTranslation($translation);
         $group->setCreatedAt(new \DateTimeImmutable());
-        $this->em->getRepository('App\Entity\WordGroup')->create($group);
+        $this->groupRepository->create($group);
 
         return $group;
     }
