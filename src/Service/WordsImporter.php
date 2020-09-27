@@ -9,8 +9,8 @@ use App\Exception\UploadException;
 use App\Repository\LanguageRepository;
 use App\Repository\WordGroupRepository;
 use App\Service\WordsImport\WordsImportFactory;
+use App\ViewModel\UploadedWordListDTO;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Facade class for importing word lists.
@@ -44,26 +44,22 @@ final class WordsImporter
      * Imports the words and translations from the given file.
      * Uploaded files are not stored on the server.
      *
-     * @param UploadedFile $file                File with words and translations in correct format.
-     *                                          Look for WordsImportServiceInterface implementations to know which file types are supported.
-     * @param string       $originalLangCode    original word language code
-     * @param string       $translationLangCode translations language code
-     * @param string|null  $groupName           (optional) Group name.
-     *                                          If the group with given name exists, associates new words with existing group.
-     *                                          If the group name is empty, words are imported, but not associated with any groups.
+     * Look for WordsImportServiceInterface implementations to know which file types are supported.
+     *
+     * If the group with given name exists, associates new words with existing group.
+     * If the group name is empty, words are imported, but not associated with any groups.
+     *
+     * @param UploadedWordListDTO $wordList Word list object with the required data
      */
-    public function upload(
-        UploadedFile $file,
-        string $originalLangCode,
-        string $translationLangCode,
-        ?string $groupName = null
-    ): void {
-        $this->validateLang($originalLangCode, $translationLangCode);
+    public function upload(UploadedWordListDTO $wordList): void
+    {
+        $this->validateLang($wordList->getOriginalCode(), $wordList->getTranslationCode());
 
+        $file = $wordList->getFile();
         $filePath = $file->getRealPath();
 
-        if (null !== $groupName) {
-            $group = $this->getOrCreateGroup($groupName, $this->originalLang, $this->translationLang);
+        if (null !== $wordList->getGroupName()) {
+            $group = $this->getOrCreateGroup($wordList->getGroupName(), $this->originalLang, $this->translationLang);
         } else {
             $group = null;
         }

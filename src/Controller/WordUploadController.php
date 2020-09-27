@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Exception\UploadException;
 use App\Service\WordsImporter;
+use App\ViewModel\UploadedWordListDTO;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/api/upload")
@@ -14,10 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class WordUploadController extends ApiController
 {
     private WordsImporter $uploader;
+    private ValidatorInterface $validator;
 
-    public function __construct(WordsImporter $uploader)
+    public function __construct(WordsImporter $uploader, ValidatorInterface $validator)
     {
         $this->uploader = $uploader;
+        $this->validator = $validator;
     }
 
     /**
@@ -29,17 +34,15 @@ class WordUploadController extends ApiController
     {
         $response = new JsonResponse();
 
-        $originalCode = $request->request->get('original');
-        $translationCode = $request->request->get('translation');
-        $groupName = $request->request->get('group');
-        $file = $request->files->get('file');
+        $wordList = new UploadedWordListDTO($request->request, $request->files);
 
-        if (!$originalCode || !$translationCode || empty($file)) {
-            return $this->errorExit($response, sprintf('Required parameters: %s.', implode(', ', ['original', 'translation', 'file'])));
+        $errors = $this->validator->validate($wordList);
+        if (count($errors) > 0) {
+            throw new InvalidArgumentException((string) $errors);
         }
 
         try {
-            $this->uploader->upload($file, $originalCode, $translationCode, $groupName);
+            $this->uploader->upload($wordList);
         } catch (UploadException $e) {
             return $this->errorExit($response, $e->getMessage());
         }
