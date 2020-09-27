@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Word;
+use App\Exception\EntityNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,7 +20,27 @@ class WordRepository extends ServiceEntityRepository
         parent::__construct($registry, Word::class);
     }
 
-    public function findOneRandom()
+    /*
+     * @throws EntityNotFoundException
+     */
+    public function getById($id): Word
+    {
+        $query = $this->createQueryBuilder('a')
+            ->where('a.id = :id')
+            ->setParameter('id', $id)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        $article = $query->getOneOrNullResult();
+
+        if (null == $article) {
+            throw new EntityNotFoundException('Article', $id);
+        }
+
+        return $article;
+    }
+
+    public function findOneRandom(): Word
     {
         $wordIds = $this
             ->createQueryBuilder('w')

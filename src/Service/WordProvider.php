@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Collection\Words;
 use App\Entity\Word;
-use App\Exception\EntityNotFoundException;
 use App\Repository\WordGroupRepository;
 use App\Repository\WordRepository;
 use App\ViewModel\WordDTO;
@@ -28,11 +27,7 @@ final class WordProvider implements WordProviderInterface
      */
     public function getItem(int $id): WordDTO
     {
-        $item = $this->repository->find($id);
-
-        if (null == $item) {
-            throw EntityNotFoundException::byId('Word', $id);
-        }
+        $item = $this->repository->getById($id);
 
         return $item->getItem();
     }

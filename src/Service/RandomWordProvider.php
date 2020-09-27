@@ -53,7 +53,7 @@ final class RandomWordProvider implements RandomWordProviderInterface
 
     private function getRandomItemInGroup(WordGroupDTO $group): WordDTO
     {
-        $group = $this->groupRepository->find($group->getId());
+        $group = $this->groupRepository->getById($group->getId());
         $words = $group->getWords()->toArray();
         $key = \array_rand($words);
 

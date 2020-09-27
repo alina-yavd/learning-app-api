@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Collection\WordTranslations;
 use App\Entity\WordTranslation;
-use App\Exception\EntityNotFoundException;
 use App\Repository\WordTranslationRepository;
 use App\ViewModel\WordTranslationDTO;
 
@@ -26,11 +25,7 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
      */
     public function getItem(int $id): WordTranslationDTO
     {
-        $item = $this->repository->find($id);
-
-        if (null == $item) {
-            throw EntityNotFoundException::byId('Word translation', $id);
-        }
+        $item = $this->repository->getById($id);
 
         return $item->getItem();
     }
