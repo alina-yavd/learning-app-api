@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Exception\EntityNotFoundException;
+use App\Service\WordGroupFilter;
 use App\Service\WordGroupProviderInterface;
 use App\Transformer\WordGroupTransformer;
 use App\Transformer\WordGroupWithWordsTransformer;
@@ -20,11 +21,13 @@ class WordGroupController extends ApiController
 {
     private WordGroupProviderInterface $groupProvider;
     private Manager $transformer;
+    private WordGroupFilter $filter;
 
-    public function __construct(WordGroupProviderInterface $groupProvider, Manager $manager)
+    public function __construct(WordGroupProviderInterface $groupProvider, Manager $manager, WordGroupFilter $filter)
     {
         $this->groupProvider = $groupProvider;
         $this->transformer = $manager;
+        $this->filter = $filter;
     }
 
     /**
@@ -34,10 +37,9 @@ class WordGroupController extends ApiController
      */
     public function list(Request $request): JsonResponse
     {
-        $languageCode = $request->query->get('language');
-        $translationCode = $request->query->get('translation');
-
-        $items = $this->groupProvider->getList(['language' => $languageCode, 'translation' => $translationCode]);
+        $this->filter->setLanguage($request->query->get('language'));
+        $this->filter->setTranslation($request->query->get('translation'));
+        $items = $this->groupProvider->getList($this->filter);
         $data = new Collection($items, new WordGroupTransformer());
 
         return new JsonResponse($this->transformer->createData($data));

@@ -33,11 +33,11 @@ interface WordGroupProviderInterface
     /**
      * Finds all word groups.
      *
-     * @param array $filter Contains associated array with the filter data
+     * @param WordGroupFilter $filter Contains filter data
      *
      * @return WordGroups Word group view model collection
      */
-    public function getList(array $filter = []): WordGroups;
+    public function getList(WordGroupFilter $filter): WordGroups;
 
     /**
      * Removes word group by id.
