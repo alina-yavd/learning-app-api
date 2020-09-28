@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Collection\WordGroups;
 use App\Entity\WordGroup;
 use App\Exception\EntityNotFoundException;
-use App\ViewModel\WordGroupDTO;
+use App\ViewModel\WordGroupViewModel;
 
 /**
  * WordGroupProviderInterface represents the interface for word group provider implementations.
@@ -15,11 +15,11 @@ interface WordGroupProviderInterface
     /**
      * Finds one word group by id.
      *
-     * @return WordGroupDTO Word group view model
+     * @return WordGroupViewModel Word group view model
      *
      * @throws EntityNotFoundException
      */
-    public function getItem(int $id): WordGroupDTO;
+    public function getItem(int $id): WordGroupViewModel;
 
     /**
      * Finds one word group by name.

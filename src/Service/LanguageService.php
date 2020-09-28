@@ -6,7 +6,7 @@ use App\Collection\Languages;
 use App\Entity\Language;
 use App\Exception\LanguageAlreadyExistsException;
 use App\Repository\LanguageRepository;
-use App\ViewModel\LanguageDTO;
+use App\ViewModel\LanguageViewModel;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -39,7 +39,7 @@ final class LanguageService implements LanguageServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function createItem(string $code, string $name): LanguageDTO
+    public function createItem(string $code, string $name): LanguageViewModel
     {
         $item = $this->repository->findOneBy(['code' => $code]);
 

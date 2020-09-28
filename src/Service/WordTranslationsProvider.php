@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Collection\WordTranslations;
 use App\Entity\WordTranslation;
 use App\Repository\WordTranslationRepository;
-use App\ViewModel\WordTranslationDTO;
+use App\ViewModel\WordTranslationViewModel;
 
 /**
  * Implements WordTranslationsProviderInterface for entities that are stored in database.
@@ -23,7 +23,7 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
     /**
      * {@inheritdoc}
      */
-    public function getItem(int $id): WordTranslationDTO
+    public function getItem(int $id): WordTranslationViewModel
     {
         $item = $this->repository->getById($id);
 
@@ -57,7 +57,7 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
     /**
      * {@inheritdoc}
      */
-    public function getItemForWord(int $wordId): WordTranslationDTO
+    public function getItemForWord(int $wordId): WordTranslationViewModel
     {
         $items = $this->repository->findBy(['word' => $wordId]);
         $key = \array_rand($items);

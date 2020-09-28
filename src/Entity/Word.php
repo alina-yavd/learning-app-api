@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WordRepository;
-use App\ViewModel\WordDTO;
+use App\ViewModel\WordViewModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -147,9 +147,9 @@ class Word
         return $this;
     }
 
-    public function getItem(): WordDTO
+    public function getItem(): WordViewModel
     {
-        return new WordDTO(
+        return new WordViewModel(
             $this->id,
             $this->text,
             $this->translations,

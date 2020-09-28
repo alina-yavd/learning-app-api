@@ -6,7 +6,7 @@ use App\Collection\WordGroups;
 use App\Entity\Word;
 use App\Entity\WordGroup;
 use App\Repository\WordGroupRepository;
-use App\ViewModel\WordGroupDTO;
+use App\ViewModel\WordGroupViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -28,7 +28,7 @@ final class WordGroupProvider implements WordGroupProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getItem(int $id): WordGroupDTO
+    public function getItem(int $id): WordGroupViewModel
     {
         $item = $this->repository->getById($id);
 

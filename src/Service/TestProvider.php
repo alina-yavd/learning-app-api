@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\ViewModel\TestDTO;
+use App\ViewModel\TestViewModel;
 
 /**
  * Implements TestProviderInterface for entities that are stored in database.
@@ -29,7 +29,7 @@ final class TestProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getTest(?int $groupId = null): ?TestDTO
+    public function getTest(?int $groupId = null): ?TestViewModel
     {
         if ($groupId) {
             $group = $this->groupProvider->getItem($groupId);
@@ -44,7 +44,7 @@ final class TestProvider implements TestProviderInterface
         $answers->add($translation);
         $answers->shuffle();
 
-        return new TestDTO($word, $answers, $group);
+        return new TestViewModel($word, $answers, $group);
     }
 
     /**

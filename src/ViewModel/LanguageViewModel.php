@@ -2,7 +2,7 @@
 
 namespace App\ViewModel;
 
-final class LanguageDTO
+final class LanguageViewModel
 {
     private int $id;
     private string $code;

@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\LanguageRepository;
-use App\ViewModel\LanguageDTO;
+use App\ViewModel\LanguageViewModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -167,9 +167,9 @@ class Language
         return $this;
     }
 
-    public function getItem(): LanguageDTO
+    public function getItem(): LanguageViewModel
     {
-        return new LanguageDTO(
+        return new LanguageViewModel(
             $this->id,
             $this->code,
             $this->name

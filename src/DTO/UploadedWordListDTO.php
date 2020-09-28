@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ViewModel;
+namespace App\DTO;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;

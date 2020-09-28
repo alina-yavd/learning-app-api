@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Collection\Languages;
 use App\Exception\LanguageAlreadyExistsException;
-use App\ViewModel\LanguageDTO;
+use App\ViewModel\LanguageViewModel;
 use InvalidArgumentException;
 
 /**
@@ -22,9 +22,9 @@ interface LanguageServiceInterface
     /**
      * Creates new language entity.
      *
-     * @return LanguageDTO Language view model
+     * @return LanguageViewModel Language view model
      *
      * @throws LanguageAlreadyExistsException | InvalidArgumentException
      */
-    public function createItem(string $code, string $name): LanguageDTO;
+    public function createItem(string $code, string $name): LanguageViewModel;
 }

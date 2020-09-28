@@ -9,7 +9,7 @@ use App\Exception\UploadException;
 use App\Repository\LanguageRepository;
 use App\Repository\WordGroupRepository;
 use App\Service\WordsImport\WordsImportFactory;
-use App\ViewModel\UploadedWordListDTO;
+use App\DTO\UploadedWordListDTO;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -64,7 +64,7 @@ final class WordsImporter
             $group = null;
         }
 
-        $strategy = $this->factory->getStrategy($file->getClientMimeType());
+        $strategy = $this->factory->create($file->getClientMimeType());
         $strategy->import($filePath, $this->originalLang, $this->translationLang, $group);
     }
 
