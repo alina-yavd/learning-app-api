@@ -9,8 +9,6 @@ use SimpleXmlReader\SimpleXmlReader;
  */
 final class XmlImportService extends AbstractImportService implements WordsImportServiceInterface
 {
-    protected array $fileTypes = ['application/xml', 'text/xml'];
-
     /**
      * {@inheritdoc}
      */
@@ -19,5 +17,10 @@ final class XmlImportService extends AbstractImportService implements WordsImpor
         $xml = SimpleXmlReader::openXML($filePath);
 
         return $xml->path('items/item') ?? null;
+    }
+
+    public static function getServiceKey(): string
+    {
+        return 'importer_xml';
     }
 }

@@ -64,7 +64,10 @@ final class WordsImporter
             $group = null;
         }
 
-        $strategy = $this->factory->create($file->getClientMimeType());
+        $fileType = explode('/', $file->getClientMimeType());
+        $fileType = end($fileType);
+
+        $strategy = $this->factory->create($fileType);
         $strategy->import($filePath, $this->originalLang, $this->translationLang, $group);
     }
 
