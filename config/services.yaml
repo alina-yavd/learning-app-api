@@ -35,9 +35,9 @@ services:
 
     _instanceof:
         App\Service\WordsImport\WordsImportServiceInterface:
-            tags: [ 'app.import_services_tag' ]
+            tags: [ 'app.import_services' ]
 
     App\Service\WordsImport\WordsImportFactory:
-        arguments: [ !tagged_locator { tag: 'app.import_services_tag' } ]
+        arguments: [ !tagged_locator { tag: 'app.import_services', index_by: 'key', default_index_method: 'getServiceKey' } ]
 
     League\Fractal\Manager: ~

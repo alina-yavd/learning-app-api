@@ -2,23 +2,19 @@
 
 namespace App\Service\WordsImport;
 
+use App\Exception\UploadException;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 /**
- *  Implements WordsImportFactory for services found by ServiceLocator (app.import_services_tag).
+ *  Implements WordsImportFactory for services found by ServiceLocator (app.import_services).
  */
 final class WordsImportFactory implements WordsImportFactoryInterface
 {
-    private ?ImportServicesCollection $services;
+    private ServiceLocator $locator;
 
-    public function __construct(ServiceLocator $locator, WordsUploaderInterface $uploader)
+    public function __construct(ServiceLocator $locator)
     {
-        $services = [];
-        $locatorServices = $locator->getProvidedServices();
-        foreach ($locatorServices as $servicePath) {
-            $services[] = new $servicePath($uploader);
-        }
-        $this->services = new ImportServicesCollection(...$services);
+        $this->locator = $locator;
     }
 
     /**
@@ -26,10 +22,10 @@ final class WordsImportFactory implements WordsImportFactoryInterface
      */
     public function create(string $type): WordsImportServiceInterface
     {
-        $strategies = $this->services->filter(function ($item) use ($type) {
-            return in_array($type, $item->getSupportedTypes());
-        });
-
-        return array_shift($strategies);
+        if ($this->locator->has('importer_'.$type)) {
+            return $this->locator->get('importer_'.$type);
+        } else {
+            throw new UploadException('Uploaded file type not supported.');
+        }
     }
 }

@@ -7,8 +7,6 @@ namespace App\Service\WordsImport;
  */
 final class JsonImportService extends AbstractImportService implements WordsImportServiceInterface
 {
-    protected array $fileTypes = ['application/json'];
-
     /**
      * {@inheritdoc}
      */
@@ -17,5 +15,10 @@ final class JsonImportService extends AbstractImportService implements WordsImpo
         $json = \json_decode(\file_get_contents($filePath));
 
         return $json->items ?? null;
+    }
+
+    public static function getServiceKey(): string
+    {
+        return 'importer_json';
     }
 }
