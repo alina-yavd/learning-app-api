@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WordRepository;
-use App\ViewModel\WordDTO;
+use App\ViewModel\WordViewModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -52,10 +52,12 @@ class Word
      */
     private ?\DateTimeImmutable $updatedAt;
 
-    public function __construct()
+    public function __construct(string $text, Language $language)
     {
         $this->translations = new ArrayCollection();
         $this->groups = new ArrayCollection();
+        $this->text = $text;
+        $this->language = $language;
     }
 
     public function getId(): ?int
@@ -66,13 +68,6 @@ class Word
     public function getText(): string
     {
         return $this->text;
-    }
-
-    public function setText(string $text): self
-    {
-        $this->text = $text;
-
-        return $this;
     }
 
     /**
@@ -123,25 +118,9 @@ class Word
         return $this;
     }
 
-    public function removeFromGroup(WordGroup $group): self
-    {
-        if ($this->groups->contains($group)) {
-            $this->groups->removeElement($group);
-        }
-
-        return $this;
-    }
-
     public function getLanguage(): Language
     {
         return $this->language;
-    }
-
-    public function setLanguage(Language $language): self
-    {
-        $this->language = $language;
-
-        return $this;
     }
 
     public function getCreatedAt(): \DateTimeImmutable
@@ -168,9 +147,9 @@ class Word
         return $this;
     }
 
-    public function getItem(): WordDTO
+    public function getItem(): WordViewModel
     {
-        return new WordDTO(
+        return new WordViewModel(
             $this->id,
             $this->text,
             $this->translations,

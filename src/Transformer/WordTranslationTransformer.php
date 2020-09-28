@@ -2,12 +2,12 @@
 
 namespace App\Transformer;
 
-use App\ViewModel\WordTranslationDTO;
+use App\ViewModel\WordTranslationViewModel;
 use League\Fractal\TransformerAbstract;
 
 final class WordTranslationTransformer extends TransformerAbstract
 {
-    public function transform(WordTranslationDTO $translation): array
+    public function transform(WordTranslationViewModel $translation): array
     {
         return [
             'id' => $translation->getId(),

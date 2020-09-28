@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\WordGroup;
+use App\Exception\EntityNotFoundException;
+use App\Service\WordGroupFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -15,17 +16,76 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class WordGroupRepository extends ServiceEntityRepository
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $entityManager, ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, WordGroup::class);
-        $this->em = $entityManager;
+    }
+
+    /*
+    * @throws EntityNotFoundException
+    */
+    public function getById(int $id): WordGroup
+    {
+        $query = $this->createQueryBuilder('g')
+            ->where('g.id = :id')
+            ->setParameter('id', $id)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        $item = $query->getOneOrNullResult();
+
+        if (null == $item) {
+            throw EntityNotFoundException::byId('Word group', $id);
+        }
+
+        return $item;
+    }
+
+    /*
+    * @throws EntityNotFoundException
+    */
+    public function getByName(string $name): WordGroup
+    {
+        $query = $this->createQueryBuilder('g')
+            ->where('g.name = :name')
+            ->setParameter('name', $name)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        $item = $query->getOneOrNullResult();
+
+        if (null == $item) {
+            throw EntityNotFoundException::byName('Word group', $name);
+        }
+
+        return $item;
+    }
+
+    public function getByFilter(WordGroupFilter $filter): ?array
+    {
+        $query = $this->createQueryBuilder('g');
+
+        if ($filter->hasLanguage()) {
+            $query->where('g.language = :language')
+                ->setParameter('language', $filter->getLanguage());
+        }
+
+        if ($filter->hasLanguage() && $filter->hasTranslation()) {
+            $query->andWhere('g.translation = :translation')
+                ->setParameter('translation', $filter->getTranslation());
+        } elseif ($filter->hasTranslation()) {
+            $query->where('g.translation = :translation')
+                ->setParameter('translation', $filter->getTranslation());
+        }
+
+        $query = $query->getQuery();
+
+        return $query->getResult();
     }
 
     public function create(WordGroup $group): void
     {
-        $this->em->persist($group);
-        $this->em->flush();
+        $this->_em->persist($group);
+        $this->_em->flush();
     }
 }

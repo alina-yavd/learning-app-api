@@ -6,7 +6,7 @@ use App\Entity\Language;
 use App\Entity\Word;
 use Doctrine\Common\Collections\Collection;
 
-final class WordGroupDTO
+final class WordGroupViewModel
 {
     private int $id;
     private string $name;

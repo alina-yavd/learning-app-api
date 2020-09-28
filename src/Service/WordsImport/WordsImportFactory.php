@@ -24,7 +24,7 @@ final class WordsImportFactory implements WordsImportFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getStrategy(string $type): WordsImportServiceInterface
+    public function create(string $type): WordsImportServiceInterface
     {
         $strategies = $this->services->filter(function ($item) use ($type) {
             return in_array($type, $item->getSupportedTypes());

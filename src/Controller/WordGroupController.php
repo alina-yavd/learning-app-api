@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Exception\EntityNotFoundException;
+use App\Service\WordGroupFilter;
 use App\Service\WordGroupProviderInterface;
 use App\Transformer\WordGroupTransformer;
 use App\Transformer\WordGroupWithWordsTransformer;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,17 +17,17 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/group")
  */
-class WordGroupController extends AbstractController
+class WordGroupController extends ApiController
 {
-    use JsonExit;
-
     private WordGroupProviderInterface $groupProvider;
     private Manager $transformer;
+    private WordGroupFilter $filter;
 
-    public function __construct(WordGroupProviderInterface $groupProvider, Manager $manager)
+    public function __construct(WordGroupProviderInterface $groupProvider, Manager $manager, WordGroupFilter $filter)
     {
         $this->groupProvider = $groupProvider;
         $this->transformer = $manager;
+        $this->filter = $filter;
     }
 
     /**
@@ -37,10 +37,9 @@ class WordGroupController extends AbstractController
      */
     public function list(Request $request): JsonResponse
     {
-        $languageCode = $request->query->get('language');
-        $translationCode = $request->query->get('translation');
-
-        $items = $this->groupProvider->getList(['language' => $languageCode, 'translation' => $translationCode]);
+        $this->filter->setLanguage($request->query->get('language'));
+        $this->filter->setTranslation($request->query->get('translation'));
+        $items = $this->groupProvider->getList($this->filter);
         $data = new Collection($items, new WordGroupTransformer());
 
         return new JsonResponse($this->transformer->createData($data));
@@ -70,18 +69,15 @@ class WordGroupController extends AbstractController
         $deleteWithData = $request->query->getBoolean('removeData');
 
         try {
-            $this->groupProvider->removeItem((int) $id, $deleteWithData);
+            if ($deleteWithData) {
+                $this->groupProvider->removeItemWithWords($id);
+            } else {
+                $this->groupProvider->removeItem($id);
+            }
         } catch (EntityNotFoundException $e) {
             return $this->errorExit($response, $e->getMessage(), 404);
         }
 
-        $json = [
-            'status' => 'success',
-            'message' => 'Word list successfully deleted.',
-        ];
-
-        $response->setData($json);
-
-        return $response;
+        return $this->successExit($response);
     }
 }

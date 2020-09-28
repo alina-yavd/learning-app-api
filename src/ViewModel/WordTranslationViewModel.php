@@ -2,7 +2,7 @@
 
 namespace App\ViewModel;
 
-final class WordTranslationDTO
+final class WordTranslationViewModel
 {
     private int $id;
     private string $text;

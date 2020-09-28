@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WordGroupRepository;
-use App\ViewModel\WordGroupDTO;
+use App\ViewModel\WordGroupViewModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -120,9 +120,9 @@ class WordGroup
         return $this;
     }
 
-    public function getItem(): WordGroupDTO
+    public function getItem(): WordGroupViewModel
     {
-        return new WordGroupDTO(
+        return new WordGroupViewModel(
             $this->id,
             $this->name,
             $this->language,

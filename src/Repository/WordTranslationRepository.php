@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\WordTranslation;
+use App\Exception\EntityNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,26 @@ class WordTranslationRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, WordTranslation::class);
+    }
+
+    /*
+    * @throws EntityNotFoundException
+    */
+    public function getById(int $id): WordTranslation
+    {
+        $query = $this->createQueryBuilder('t')
+            ->where('t.id = :id')
+            ->setParameter('id', $id)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        $item = $query->getOneOrNullResult();
+
+        if (null == $item) {
+            throw EntityNotFoundException::byId('Word translation', $id);
+        }
+
+        return $item;
     }
 
     public function findAllExcludingWord(int $wordId): ?array

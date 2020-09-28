@@ -3,13 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\LanguageRepository;
-use App\ViewModel\LanguageDTO;
+use App\ViewModel\LanguageViewModel;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=LanguageRepository::class)
+ * @UniqueEntity("code")
  */
 class Language
 {
@@ -22,11 +25,13 @@ class Language
 
     /**
      * @ORM\Column(type="string", length=2)
+     * @Assert\Length(min = 2, max = 2)
      */
     private string $code;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private string $name;
 
@@ -45,11 +50,13 @@ class Language
      */
     private Collection $wordGroups;
 
-    public function __construct()
+    public function __construct(string $code, string $name)
     {
         $this->words = new ArrayCollection();
         $this->translations = new ArrayCollection();
         $this->wordGroups = new ArrayCollection();
+        $this->code = $code;
+        $this->name = $name;
     }
 
     public function getId(): ?int
@@ -62,23 +69,9 @@ class Language
         return $this->code;
     }
 
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
     public function getName(): ?string
     {
         return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     /**
@@ -174,9 +167,9 @@ class Language
         return $this;
     }
 
-    public function getItem(): LanguageDTO
+    public function getItem(): LanguageViewModel
     {
-        return new LanguageDTO(
+        return new LanguageViewModel(
             $this->id,
             $this->code,
             $this->name

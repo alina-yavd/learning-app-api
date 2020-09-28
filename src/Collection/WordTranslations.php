@@ -2,13 +2,13 @@
 
 namespace App\Collection;
 
-use App\ViewModel\WordTranslationDTO;
+use App\ViewModel\WordTranslationViewModel;
 
 final class WordTranslations implements \IteratorAggregate
 {
     private array $translations;
 
-    public function __construct(WordTranslationDTO ...$translations)
+    public function __construct(WordTranslationViewModel ...$translations)
     {
         $this->translations = $translations;
     }
@@ -29,7 +29,7 @@ final class WordTranslations implements \IteratorAggregate
         return $result;
     }
 
-    public function add(WordTranslationDTO $translation)
+    public function add(WordTranslationViewModel $translation)
     {
         return array_unshift($this->translations, $translation);
     }

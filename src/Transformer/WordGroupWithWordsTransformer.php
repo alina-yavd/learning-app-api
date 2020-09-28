@@ -2,11 +2,11 @@
 
 namespace App\Transformer;
 
-use App\ViewModel\WordGroupDTO;
+use App\ViewModel\WordGroupViewModel;
 
 final class WordGroupWithWordsTransformer extends WordGroupTransformer
 {
-    public function transform(WordGroupDTO $group): array
+    public function transform(WordGroupViewModel $group): array
     {
         return [
             'id' => $group->getId(),

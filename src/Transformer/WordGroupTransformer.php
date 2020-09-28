@@ -2,14 +2,14 @@
 
 namespace App\Transformer;
 
-use App\ViewModel\WordGroupDTO;
+use App\ViewModel\WordGroupViewModel;
 use League\Fractal\TransformerAbstract;
 
 class WordGroupTransformer extends TransformerAbstract
 {
     protected $defaultIncludes = ['language', 'translation'];
 
-    public function transform(WordGroupDTO $group): array
+    public function transform(WordGroupViewModel $group): array
     {
         return [
             'id' => $group->getId(),
@@ -17,14 +17,14 @@ class WordGroupTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeLanguage(WordGroupDTO $group)
+    public function includeLanguage(WordGroupViewModel $group)
     {
         $language = $group->getLanguage()->getItem();
 
         return $this->item($language, new LanguageTransformer());
     }
 
-    public function includeTranslation(WordGroupDTO $group)
+    public function includeTranslation(WordGroupViewModel $group)
     {
         $translation = $group->getTranslation()->getItem();
 
