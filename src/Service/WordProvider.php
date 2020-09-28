@@ -4,10 +4,9 @@ namespace App\Service;
 
 use App\Collection\Words;
 use App\Entity\Word;
-use App\Exception\EntityNotFoundException;
 use App\Repository\WordGroupRepository;
 use App\Repository\WordRepository;
-use App\ViewModel\WordDTO;
+use App\ViewModel\WordViewModel;
 
 /**
  * Implements WordProviderInterface for entities that are stored in database.
@@ -26,13 +25,9 @@ final class WordProvider implements WordProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getItem(int $id): WordDTO
+    public function getItem(int $id): WordViewModel
     {
-        $item = $this->repository->find($id);
-
-        if (null == $item) {
-            throw EntityNotFoundException::byId('Word', $id);
-        }
+        $item = $this->repository->getById($id);
 
         return $item->getItem();
     }

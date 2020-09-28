@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Collection\Words;
 use App\Exception\EntityNotFoundException;
-use App\ViewModel\WordDTO;
+use App\ViewModel\WordViewModel;
 
 /**
  * WordProviderInterface represents the interface for word provider implementations.
@@ -14,11 +14,11 @@ interface WordProviderInterface
     /**
      * Finds one language by id.
      *
-     * @return WordDTO Word view model
+     * @return WordViewModel Word view model
      *
      * @throws EntityNotFoundException
      */
-    public function getItem(int $id): WordDTO;
+    public function getItem(int $id): WordViewModel;
 
     /**
      * Finds all words.

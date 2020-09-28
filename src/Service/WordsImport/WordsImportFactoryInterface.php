@@ -10,5 +10,5 @@ interface WordsImportFactoryInterface
     /**
      * Finds the appropriate strategy depending on uploaded file type.
      */
-    public function getStrategy(string $type): WordsImportServiceInterface;
+    public function create(string $type): WordsImportServiceInterface;
 }

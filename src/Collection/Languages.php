@@ -2,13 +2,13 @@
 
 namespace App\Collection;
 
-use App\ViewModel\LanguageDTO;
+use App\ViewModel\LanguageViewModel;
 
 final class Languages implements \IteratorAggregate
 {
     private array $languages;
 
-    public function __construct(LanguageDTO ...$languages)
+    public function __construct(LanguageViewModel ...$languages)
     {
         $this->languages = $languages;
     }
@@ -16,16 +16,5 @@ final class Languages implements \IteratorAggregate
     public function getIterator(): iterable
     {
         return new \ArrayIterator($this->languages);
-    }
-
-    public function map(callable $fn)
-    {
-        $result = [];
-
-        foreach ($this as $item) {
-            $result[] = $fn($item);
-        }
-
-        return $result;
     }
 }

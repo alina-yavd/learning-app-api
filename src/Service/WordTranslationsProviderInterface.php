@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Collection\WordTranslations;
 use App\Exception\EntityNotFoundException;
-use App\ViewModel\WordTranslationDTO;
+use App\ViewModel\WordTranslationViewModel;
 
 /**
  * WordTranslationsProviderInterface represents the interface for word translation provider implementations.
@@ -14,11 +14,11 @@ interface WordTranslationsProviderInterface
     /**
      * Finds one word translation by id.
      *
-     * @return WordTranslationDTO Word translation view model
+     * @return WordTranslationViewModel Word translation view model
      *
      * @throws EntityNotFoundException
      */
-    public function getItem(int $id): WordTranslationDTO;
+    public function getItem(int $id): WordTranslationViewModel;
 
     /**
      * Finds all word translations.
@@ -37,9 +37,9 @@ interface WordTranslationsProviderInterface
     /**
      * Finds one random word translation for given word.
      *
-     * @return WordTranslationDTO Word translation view model
+     * @return WordTranslationViewModel Word translation view model
      */
-    public function getItemForWord(int $wordId): WordTranslationDTO;
+    public function getItemForWord(int $wordId): WordTranslationViewModel;
 
     /**
      * Finds some word translations that are not associated with given word.

@@ -2,13 +2,13 @@
 
 namespace App\Collection;
 
-use App\ViewModel\WordGroupDTO;
+use App\ViewModel\WordGroupViewModel;
 
 final class WordGroups implements \IteratorAggregate
 {
     private array $groups;
 
-    public function __construct(WordGroupDTO ...$groups)
+    public function __construct(WordGroupViewModel ...$groups)
     {
         $this->groups = $groups;
     }
@@ -29,7 +29,7 @@ final class WordGroups implements \IteratorAggregate
         return $result;
     }
 
-    public function add(WordGroupDTO $translation)
+    public function add(WordGroupViewModel $translation)
     {
         return array_unshift($this->groups, $translation);
     }

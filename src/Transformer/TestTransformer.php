@@ -2,33 +2,33 @@
 
 namespace App\Transformer;
 
-use App\ViewModel\TestDTO;
+use App\ViewModel\TestViewModel;
 use League\Fractal\TransformerAbstract;
 
 final class TestTransformer extends TransformerAbstract
 {
     protected $defaultIncludes = ['word', 'answers', 'group'];
 
-    public function transform(TestDTO $test): array
+    public function transform(TestViewModel $test): array
     {
         return [];
     }
 
-    public function includeWord(TestDTO $test)
+    public function includeWord(TestViewModel $test)
     {
         $word = $test->getWord();
 
         return $this->item($word, new WordTransformer());
     }
 
-    public function includeAnswers(TestDTO $test)
+    public function includeAnswers(TestViewModel $test)
     {
         $answers = $test->getAnswers();
 
         return $this->collection($answers, new WordTranslationTransformer());
     }
 
-    public function includeGroup(TestDTO $test)
+    public function includeGroup(TestViewModel $test)
     {
         if (null !== $test->getGroup()) {
             $group = $test->getGroup();

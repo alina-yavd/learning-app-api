@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WordTranslationRepository;
-use App\ViewModel\WordTranslationDTO;
+use App\ViewModel\WordTranslationViewModel;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -109,9 +109,9 @@ class WordTranslation
         return $this;
     }
 
-    public function getItem(): WordTranslationDTO
+    public function getItem(): WordTranslationViewModel
     {
-        return new WordTranslationDTO(
+        return new WordTranslationViewModel(
             $this->id,
             $this->text
         );

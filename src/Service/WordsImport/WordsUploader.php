@@ -6,6 +6,8 @@ use App\Entity\Language;
 use App\Entity\Word;
 use App\Entity\WordGroup;
 use App\Entity\WordTranslation;
+use App\Repository\WordRepository;
+use App\Repository\WordTranslationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -14,10 +16,17 @@ use Doctrine\ORM\EntityManagerInterface;
 final class WordsUploader implements WordsUploaderInterface
 {
     private EntityManagerInterface $em;
+    private WordRepository $wordRepository;
+    private WordTranslationRepository $translationRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        WordRepository $wordRepository,
+        WordTranslationRepository $translationRepository
+    ) {
         $this->em = $entityManager;
+        $this->wordRepository = $wordRepository;
+        $this->translationRepository = $translationRepository;
     }
 
     /**
@@ -26,13 +35,11 @@ final class WordsUploader implements WordsUploaderInterface
     public function upload(iterable $items, Language $originalLang, Language $translationLang, WordGroup $group = null): void
     {
         foreach ($items as $item) {
-            $word = $this->em->getRepository('App\Entity\Word')->findOneBy(['text' => (string) $item->word]);
+            $word = $this->wordRepository->findOneBy(['text' => (string) $item->word]);
 
             if (null === $word) {
-                $word = new Word();
-                $word->setText((string) $item->word);
+                $word = new Word((string) $item->word, $originalLang);
                 $word->setCreatedAt(new \DateTimeImmutable());
-                $word->setLanguage($originalLang);
             }
 
             $this->addWordToGroup($word, $group);
@@ -57,7 +64,7 @@ final class WordsUploader implements WordsUploaderInterface
 
     private function addWordTranslation(Word $word, $translationText, $translationLang)
     {
-        $translation = $this->em->getRepository('App\Entity\WordTranslation')->findOneBy(['text' => (string) $translationText]);
+        $translation = $this->translationRepository->findOneBy(['text' => (string) $translationText]);
 
         if (null === $translation) {
             $translation = new WordTranslation();

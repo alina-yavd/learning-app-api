@@ -2,13 +2,15 @@
 
 namespace App\Service;
 
+use App\DTO\UploadedWordListDTO;
 use App\Entity\Language;
 use App\Entity\WordGroup;
 use App\Exception\EntityNotFoundException;
 use App\Exception\UploadException;
+use App\Repository\LanguageRepository;
+use App\Repository\WordGroupRepository;
 use App\Service\WordsImport\WordsImportFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Facade class for importing word lists.
@@ -19,55 +21,57 @@ final class WordsImporter
     private WordsImportFactory $factory;
     private EntityManagerInterface $em;
     private WordGroupProviderInterface $groupProvider;
+    private LanguageRepository $languageRepository;
+    private WordGroupRepository $groupRepository;
     private ?Language $originalLang;
     private ?Language $translationLang;
 
     public function __construct(
         WordsImportFactory $factory,
         EntityManagerInterface $em,
-        WordGroupProviderInterface $groupProvider
+        WordGroupProviderInterface $groupProvider,
+        LanguageRepository $languageRepository,
+        WordGroupRepository $groupRepository
     ) {
         $this->factory = $factory;
         $this->em = $em;
         $this->groupProvider = $groupProvider;
+        $this->languageRepository = $languageRepository;
+        $this->groupRepository = $groupRepository;
     }
 
     /**
      * Imports the words and translations from the given file.
      * Uploaded files are not stored on the server.
      *
-     * @param UploadedFile $file                File with words and translations in correct format.
-     *                                          Look for WordsImportServiceInterface implementations to know which file types are supported.
-     * @param string       $originalLangCode    original word language code
-     * @param string       $translationLangCode translations language code
-     * @param string|null  $groupName           (optional) Group name.
-     *                                          If the group with given name exists, associates new words with existing group.
-     *                                          If the group name is empty, words are imported, but not associated with any groups.
+     * Look for WordsImportServiceInterface implementations to know which file types are supported.
+     *
+     * If the group with given name exists, associates new words with existing group.
+     * If the group name is empty, words are imported, but not associated with any groups.
+     *
+     * @param UploadedWordListDTO $wordList Word list object with the required data
      */
-    public function upload(
-        UploadedFile $file,
-        string $originalLangCode,
-        string $translationLangCode,
-        ?string $groupName = null
-    ): void {
-        $this->validateLang($originalLangCode, $translationLangCode);
+    public function upload(UploadedWordListDTO $wordList): void
+    {
+        $this->validateLang($wordList->getOriginalCode(), $wordList->getTranslationCode());
 
+        $file = $wordList->getFile();
         $filePath = $file->getRealPath();
 
-        if (null !== $groupName) {
-            $group = $this->getOrCreateGroup($groupName, $this->originalLang, $this->translationLang);
+        if (null !== $wordList->getGroupName()) {
+            $group = $this->getOrCreateGroup($wordList->getGroupName(), $this->originalLang, $this->translationLang);
         } else {
             $group = null;
         }
 
-        $strategy = $this->factory->getStrategy($file->getClientMimeType());
+        $strategy = $this->factory->create($file->getClientMimeType());
         $strategy->import($filePath, $this->originalLang, $this->translationLang, $group);
     }
 
     private function validateLang(string $originalLangCode, string $translationLangCode): void
     {
-        $this->originalLang = $this->em->getRepository('App\Entity\Language')->findOneBy(['code' => $originalLangCode]);
-        $this->translationLang = $this->em->getRepository('App\Entity\Language')->findOneBy(['code' => $translationLangCode]);
+        $this->originalLang = $this->languageRepository->findOneBy(['code' => $originalLangCode]);
+        $this->translationLang = $this->languageRepository->findOneBy(['code' => $translationLangCode]);
 
         if (null === $this->originalLang || null === $this->translationLang) {
             throw new UploadException('Languages not supported.');
@@ -96,7 +100,7 @@ final class WordsImporter
         $group->setLanguage($language);
         $group->setTranslation($translation);
         $group->setCreatedAt(new \DateTimeImmutable());
-        $this->em->getRepository('App\Entity\WordGroup')->create($group);
+        $this->groupRepository->create($group);
 
         return $group;
     }

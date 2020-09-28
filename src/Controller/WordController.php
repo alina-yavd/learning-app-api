@@ -7,17 +7,14 @@ use App\Transformer\WordTransformer;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Serializer\ArraySerializer;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/word")
  */
-class WordController extends AbstractController
+class WordController extends ApiController
 {
-    use JsonExit;
-
     private WordProviderInterface $wordProvider;
     private Manager $transformer;
 

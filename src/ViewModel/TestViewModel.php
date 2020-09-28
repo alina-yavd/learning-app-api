@@ -4,23 +4,23 @@ namespace App\ViewModel;
 
 use App\Collection\WordTranslations;
 
-final class TestDTO
+final class TestViewModel
 {
-    private WordDTO $word;
+    private WordViewModel $word;
     private WordTranslations $answers;
-    private ?WordGroupDTO $group;
+    private ?WordGroupViewModel $group;
 
     public function __construct(
-        WordDTO $word,
+        WordViewModel $word,
         WordTranslations $answers,
-        ?WordGroupDTO $group
+        ?WordGroupViewModel $group
     ) {
         $this->word = $word;
         $this->answers = $answers;
         $this->group = $group;
     }
 
-    public function getWord(): WordDTO
+    public function getWord(): WordViewModel
     {
         return $this->word;
     }
@@ -30,7 +30,7 @@ final class TestDTO
         return $this->answers;
     }
 
-    public function getGroup(): ?WordGroupDTO
+    public function getGroup(): ?WordGroupViewModel
     {
         return $this->group;
     }
