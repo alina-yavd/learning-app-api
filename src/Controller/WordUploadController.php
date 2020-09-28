@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
+use App\DTO\UploadedWordListDTO;
 use App\Exception\UploadException;
 use App\Service\WordsImporter;
-use App\DTO\UploadedWordListDTO;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

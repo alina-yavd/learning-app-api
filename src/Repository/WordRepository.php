@@ -48,6 +48,10 @@ class WordRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
+        if (empty($wordIds)) {
+            throw EntityNotFoundException::general('Word');
+        }
+
         $randomKey = array_rand($wordIds);
 
         return $this->find($wordIds[$randomKey]['id']);

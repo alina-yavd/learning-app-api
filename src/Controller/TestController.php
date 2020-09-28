@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
+use App\DTO\TestCheckDTO;
 use App\Exception\EntityNotFoundException;
 use App\Service\TestProviderInterface;
 use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
 use App\Transformer\TestTransformer;
 use App\Transformer\WordTransformer;
-use App\DTO\TestCheckDTO;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
 use League\Fractal\Serializer\ArraySerializer;

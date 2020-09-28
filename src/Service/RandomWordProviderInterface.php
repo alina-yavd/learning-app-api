@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-use App\ViewModel\WordViewModel;
 use App\ViewModel\WordGroupViewModel;
+use App\ViewModel\WordViewModel;
 
 /**
  * RandomWordProviderInterface represents the interface for random word provider implementations.

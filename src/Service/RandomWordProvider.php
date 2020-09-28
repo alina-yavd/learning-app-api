@@ -4,8 +4,8 @@ namespace App\Service;
 
 use App\Repository\WordGroupRepository;
 use App\Repository\WordRepository;
-use App\ViewModel\WordViewModel;
 use App\ViewModel\WordGroupViewModel;
+use App\ViewModel\WordViewModel;
 
 /**
  * Implements RandomWordProviderInterface for entities that are stored in database.

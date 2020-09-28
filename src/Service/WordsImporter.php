@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\DTO\UploadedWordListDTO;
 use App\Entity\Language;
 use App\Entity\WordGroup;
 use App\Exception\EntityNotFoundException;
@@ -9,7 +10,6 @@ use App\Exception\UploadException;
 use App\Repository\LanguageRepository;
 use App\Repository\WordGroupRepository;
 use App\Service\WordsImport\WordsImportFactory;
-use App\DTO\UploadedWordListDTO;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
