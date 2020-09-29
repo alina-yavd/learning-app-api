@@ -21,4 +21,11 @@ interface WordsImportServiceInterface
      * @return void
      */
     public function import(string $filePath, Language $originalLang, Language $translationLang, WordGroup $group);
+
+    /**
+     * Sets the key for service locator.
+     *
+     * Returns string with file type with 'importer_' prefix.
+     */
+    public static function getServiceKey(): string;
 }
