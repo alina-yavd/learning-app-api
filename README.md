@@ -55,13 +55,17 @@ namespace App\Service\WordsImport;
 
 final class NewImportService extends AbstractImportService implements WordsImportServiceInterface
 {
-    protected array $fileTypes = ['new-file-type'];
-
     public function getData(string $filePath): ?iterable
     {
         // do some logic to extract words data from file
 
         return $data;
     }
+
+    public static function getServiceKey(): string
+    {
+        return 'importer_'.$importedFileType;
+    }
+
 }
 ```

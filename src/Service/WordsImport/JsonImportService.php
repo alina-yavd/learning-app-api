@@ -17,6 +17,9 @@ final class JsonImportService extends AbstractImportService implements WordsImpo
         return $json->items ?? null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public static function getServiceKey(): string
     {
         return 'importer_json';
