@@ -34,10 +34,30 @@ class User implements UserInterface
      */
     private string $password;
 
-    public function __construct(string $email, string $password)
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $firstName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $lastName;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private \DateTimeImmutable $registeredAt;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private ?string $description;
+
+    public function __construct(string $email)
     {
         $this->email = $email;
-        $this->password = $password;
+        $this->registeredAt = new \DateTimeImmutable();
     }
 
     /**
@@ -55,11 +75,11 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $userRoles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $userRoles[] = 'ROLE_USER';
 
-        return array_unique($roles);
+        return array_unique($userRoles);
     }
 
     /**
@@ -68,6 +88,13 @@ class User implements UserInterface
     public function getPassword(): string
     {
         return (string) $this->password;
+    }
+
+    public function setPassword($password): self
+    {
+        $this->password = $password;
+
+        return $this;
     }
 
     /**
@@ -85,5 +112,63 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getRegisteredAt(): ?\DateTimeImmutable
+    {
+        return $this->registeredAt;
+    }
+
+    public function setRegisteredAt(\DateTimeImmutable $registeredAt): self
+    {
+        $this->registeredAt = $registeredAt;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
     }
 }

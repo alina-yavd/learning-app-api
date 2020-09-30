@@ -11,7 +11,7 @@ final class Version20200907105541 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create language table, add English and Russian language, associate word and word_translation with language.';
+        return 'Create language table, add English and Russian language, associate word and word_translation with language';
     }
 
     public function up(Schema $schema): void

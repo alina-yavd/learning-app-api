@@ -23,15 +23,29 @@ class ApiToken
     private string $token;
 
     /**
-     * @ORM\Column(type="date_immutable", nullable=true)
-     */
-    private ?\DateTimeImmutable $expiresAt;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private User $user;
+
+    /**
+     * @ORM\OneToOne(targetEntity=ApiRefreshToken::class, mappedBy="token", cascade={"persist", "remove"})
+     */
+    private ?ApiRefreshToken $refreshToken;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private \DateTimeImmutable $expiresAt;
+
+    public function __construct(User $user)
+    {
+        $this->token = bin2hex(random_bytes(40));
+        $this->user = $user;
+        $createdAt = new \DateTimeImmutable();
+        $expiresAt = $createdAt->add(new \DateInterval('PT1H'));
+        $this->expiresAt = $expiresAt;
+    }
 
     public function getId(): ?int
     {
@@ -43,34 +57,23 @@ class ApiToken
         return $this->token;
     }
 
-    public function setToken(string $token): self
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
-    public function getExpiresAt(): ?\DateTimeImmutable
-    {
-        return $this->expiresAt;
-    }
-
-    public function setExpiresAt(?\DateTimeImmutable $expiresAt): self
-    {
-        $this->expiresAt = $expiresAt;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function getRefreshToken(): ?ApiRefreshToken
     {
-        $this->user = $user;
+        return $this->refreshToken;
+    }
 
-        return $this;
+    public function getExpiresAt(): \DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->getExpiresAt() <= new \DateTimeImmutable();
     }
 }
