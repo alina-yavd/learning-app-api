@@ -52,12 +52,18 @@ class Word
      */
     private ?\DateTimeImmutable $updatedAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UserProgress::class, mappedBy="word", orphanRemoval=true)
+     */
+    private Collection $progress;
+
     public function __construct(string $text, Language $language)
     {
         $this->translations = new ArrayCollection();
         $this->groups = new ArrayCollection();
         $this->text = $text;
         $this->language = $language;
+        $this->progress = new ArrayCollection();
     }
 
     public function getId(): ?int
