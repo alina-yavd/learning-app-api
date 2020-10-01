@@ -61,11 +61,17 @@ class User implements UserInterface
      */
     private Collection $progress;
 
+    /**
+     * @ORM\OneToOne(targetEntity=UserLearning::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private ?UserLearning $learning;
+
     public function __construct(string $email)
     {
         $this->email = $email;
         $this->registeredAt = new \DateTimeImmutable();
         $this->progress = new ArrayCollection();
+        $this->learning = null;
     }
 
     /**
@@ -201,6 +207,23 @@ class User implements UserInterface
     {
         if ($this->progress->contains($progress)) {
             $this->progress->removeElement($progress);
+        }
+
+        return $this;
+    }
+
+    public function getLearning(): ?UserLearning
+    {
+        return $this->learning;
+    }
+
+    public function setLearning(UserLearning $learning): self
+    {
+        $this->learning = $learning;
+
+        // set the owning side of the relation if necessary
+        if ($learning->getUser() !== $this) {
+            $learning->setUser($this);
         }
 
         return $this;
