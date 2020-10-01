@@ -19,32 +19,16 @@ class UserProgressRepository extends ServiceEntityRepository
         parent::__construct($registry, UserProgress::class);
     }
 
-    // /**
-    //  * @return UserProgress[] Returns an array of UserProgress objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function update(UserProgress $progress, bool $passed): UserProgress
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $progress->addTestCount();
+        if ($passed) {
+            $progress->addPassCount();
+        }
 
-    /*
-    public function findOneBySomeField($value): ?UserProgress
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->_em->persist($progress);
+        $this->_em->flush();
+
+        return $progress;
     }
-    */
 }

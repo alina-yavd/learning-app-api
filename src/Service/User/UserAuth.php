@@ -52,7 +52,7 @@ class UserAuth implements UserAuthInterface
 
         $user = $this->repository->findOneBy(['email' => $userDTO->getEmail()]);
 
-        if (!$user) {
+        if (null === $user) {
             throw new UserAuthException('User with this email is not registered.');
         }
 
@@ -68,7 +68,7 @@ class UserAuth implements UserAuthInterface
         $credentials = substr($request->headers->get('Authorization'), 6); // remove 'Basic '
         $refreshToken = $this->refreshTokenRepository->findOneBy(['refreshToken' => $credentials]);
 
-        if (!$refreshToken) {
+        if (null === $refreshToken) {
             throw new UserAuthException('Invalid API refresh token.');
         }
 

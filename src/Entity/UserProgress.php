@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserProgressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserProgressRepository::class)
@@ -21,7 +22,7 @@ class UserProgress
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="word")
      * @ORM\JoinColumn(nullable=false)
      */
-    private User $user;
+    private UserInterface $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Word::class, inversedBy="progress")
@@ -39,10 +40,12 @@ class UserProgress
      */
     private int $passCount;
 
-    public function __construct(User $user, Word $word)
+    public function __construct(UserInterface $user, Word $word)
     {
         $this->user = $user;
         $this->word = $word;
+        $this->testCount = 0;
+        $this->passCount = 0;
     }
 
     public function getId(): ?int
@@ -50,7 +53,7 @@ class UserProgress
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?UserInterface
     {
         return $this->user;
     }
