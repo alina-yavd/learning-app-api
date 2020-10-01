@@ -3,14 +3,13 @@
 namespace App\Service\User;
 
 use App\DTO\ApiTokenDTO;
-use App\DTO\UserDTO;
-use App\Entity\ApiRefreshToken;
+use Symfony\Component\HttpFoundation\Request;
 
 interface UserAuthInterface
 {
-    public function login(UserDTO $userDTO): ApiTokenDTO;
+    public function login(Request $request): ApiTokenDTO;
 
-    public function refreshToken(ApiRefreshToken $refreshToken): ApiTokenDTO;
+    public function refreshToken(Request $request): ApiTokenDTO;
 
-    public function register(UserDTO $userDTO): ApiTokenDTO;
+    public function register(Request $request): ApiTokenDTO;
 }

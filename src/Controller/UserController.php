@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Service\User\UserDataServiceInterface;
 use App\Transformer\UserTransformer;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
+use League\Fractal\Serializer\ArraySerializer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -20,6 +23,7 @@ final class UserController extends ApiController
     public function __construct(Manager $manager)
     {
         $this->transformer = $manager;
+        $this->transformer->setSerializer(new ArraySerializer());
     }
 
     /**
@@ -36,9 +40,14 @@ final class UserController extends ApiController
     /**
      * @Route(methods={"POST"})
      */
-    public function update(): JsonResponse
+    public function update(Request $request, UserDataServiceInterface $userDataService): JsonResponse
     {
-        // TODO: implement user profile editing
+        try {
+            $userDataService->update($this->getUser(), $request);
+        } catch (\Exception $e) {
+            return $this->errorExit(new JsonResponse(), $e->getMessage());
+        }
+
         return $this->successExit(new JsonResponse());
     }
 }

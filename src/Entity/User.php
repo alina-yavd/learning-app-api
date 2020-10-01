@@ -124,6 +124,13 @@ class User implements UserInterface
         return $this->email;
     }
 
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -151,13 +158,6 @@ class User implements UserInterface
     public function getRegisteredAt(): ?\DateTimeImmutable
     {
         return $this->registeredAt;
-    }
-
-    public function setRegisteredAt(\DateTimeImmutable $registeredAt): self
-    {
-        $this->registeredAt = $registeredAt;
-
-        return $this;
     }
 
     public function getDescription(): ?string

@@ -4,24 +4,20 @@ namespace App\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UserDTO
+class UserDataDTO
 {
     /**
-     * @Assert\NotBlank
      * @Assert\Email
      */
     private ?string $email;
 
-    /**
-     * @Assert\NotBlank
-     */
     private ?string $password;
 
     private ?string $firstName;
 
     private ?string $lastName;
 
-    public function __construct($email, $password, $firstName = null, $lastName = null)
+    public function __construct($email = null, $password = null, $firstName = null, $lastName = null)
     {
         $this->email = $email;
         $this->password = $password;
@@ -47,5 +43,25 @@ class UserDTO
     public function getLastName(): ?string
     {
         return $this->lastName;
+    }
+
+    public function hasEmail(): bool
+    {
+        return null !== $this->email;
+    }
+
+    public function hasPassword(): bool
+    {
+        return null !== $this->password;
+    }
+
+    public function hasFirstName(): bool
+    {
+        return null !== $this->firstName;
+    }
+
+    public function hasLastName(): bool
+    {
+        return null !== $this->lastName;
     }
 }
