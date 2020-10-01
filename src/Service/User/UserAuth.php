@@ -61,8 +61,7 @@ class UserAuth implements UserAuthInterface
 
     public function refreshToken(Request $request): ApiTokenDTO
     {
-        // TODO: fix "Invalid API token." error if valid refresh token passed
-        $credentials = $this->tokenAuthenticator->getCredentials($request);
+        $credentials = substr($request->headers->get('Authorization'), 6); // remove 'Basic '
         $refreshToken = $this->refreshTokenRepository->findOneBy(['refreshToken' => $credentials]);
 
         if (!$refreshToken) {
@@ -92,10 +91,10 @@ class UserAuth implements UserAuthInterface
             throw new InvalidArgumentException((string) $errors);
         }
 
-        $user = $this->repository->findOneBy(['email' => $userDTO->getEmail()]);
+        $userWithEmail = $this->repository->findOneBy(['email' => $userDTO->getEmail()]);
 
-        if ($user) {
-            throw new UserAuthException('User with this email already exists.');
+        if ($userWithEmail) {
+            throw new InvalidArgumentException('This email is already registered.');
         }
 
         $user = $this->repository->create($userDTO);

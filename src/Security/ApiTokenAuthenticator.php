@@ -29,8 +29,13 @@ class ApiTokenAuthenticator extends AbstractGuardAuthenticator
     private CsrfTokenManagerInterface $csrfTokenManager;
     private UserPasswordEncoderInterface $passwordEncoder;
 
-    public function __construct(UserRepository $userRepository, ApiTokenRepository $apiTokenRepository, RouterInterface $router, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        ApiTokenRepository $apiTokenRepository,
+        RouterInterface $router,
+        CsrfTokenManagerInterface $csrfTokenManager,
+        UserPasswordEncoderInterface $passwordEncoder
+    ) {
         $this->userRepository = $userRepository;
         $this->apiTokenRepository = $apiTokenRepository;
         $this->router = $router;
@@ -48,7 +53,7 @@ class ApiTokenAuthenticator extends AbstractGuardAuthenticator
     {
         $authorizationHeader = $request->headers->get('Authorization');
 
-        return substr($authorizationHeader, 7);
+        return substr($authorizationHeader, 7); // remove 'Bearer '
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): ?User
