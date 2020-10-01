@@ -11,7 +11,7 @@ final class Version20200911235227 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add language and translation columns for word groups.';
+        return 'Add language and translation columns for word groups';
     }
 
     public function up(Schema $schema): void

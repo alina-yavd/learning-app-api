@@ -11,7 +11,7 @@ final class Version20200909225827 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add createdAt and updatedAt columns for Word, WordTranslation and WordGroup.';
+        return 'Add createdAt and updatedAt columns for Word, WordTranslation and WordGroup';
     }
 
     public function up(Schema $schema): void
