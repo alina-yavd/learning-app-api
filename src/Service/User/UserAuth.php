@@ -52,7 +52,11 @@ class UserAuth implements UserAuthInterface
 
         $user = $this->repository->findOneBy(['email' => $userDTO->getEmail()]);
 
-        if (!$user || !$this->passwordEncoder->isPasswordValid($user, $userDTO->getPassword())) {
+        if (!$user) {
+            throw new UserAuthException('User with this email is not registered.');
+        }
+
+        if (!$this->passwordEncoder->isPasswordValid($user, $userDTO->getPassword())) {
             throw new UserAuthException('User credentials are not correct.');
         }
 
