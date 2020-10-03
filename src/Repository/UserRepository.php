@@ -65,29 +65,12 @@ final class UserRepository extends ServiceEntityRepository implements PasswordUp
         return $user;
     }
 
-    public function updateUserLanguages(UserInterface $user, ?array $languages): UserLearning
-    {
-        $learning = $this->getUserLearning($user);
-
-        $learning->removeLanguages();
-        if ($languages) {
-            foreach ($languages as $language) {
-                $learning->addLanguage($language);
-            }
-        }
-
-        $this->_em->persist($learning);
-        $this->_em->persist($user);
-        $this->_em->flush();
-
-        return $learning;
-    }
-
     public function updateUserGroups(UserInterface $user, ?array $groups): UserLearning
     {
         $learning = $this->getUserLearning($user);
 
         $learning->removeWordGroups();
+        $learning->removeLanguages();
         if ($groups) {
             foreach ($groups as $group) {
                 $learning->addWordGroup($group);

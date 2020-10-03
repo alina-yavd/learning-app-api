@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Service\User\UserDataServiceInterface;
-use App\Transformer\UserLearningTransformer;
 use App\Transformer\UserProgressTransformer;
 use App\Transformer\UserTransformer;
+use App\Transformer\WordGroupTransformer;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
@@ -22,11 +22,13 @@ use Symfony\Component\Routing\Annotation\Route;
 final class UserController extends ApiController
 {
     private Manager $transformer;
+    private UserDataServiceInterface $userDataService;
 
-    public function __construct(Manager $manager)
+    public function __construct(Manager $manager, UserDataServiceInterface $userDataService)
     {
         $this->transformer = $manager;
         $this->transformer->setSerializer(new ArraySerializer());
+        $this->userDataService = $userDataService;
     }
 
     /**
@@ -43,10 +45,10 @@ final class UserController extends ApiController
     /**
      * @Route(methods={"POST"})
      */
-    public function update(Request $request, UserDataServiceInterface $userDataService): JsonResponse
+    public function update(Request $request): JsonResponse
     {
         try {
-            $userDataService->update($this->getUser(), $request);
+            $this->userDataService->update($request);
         } catch (\Exception $e) {
             return $this->errorExit(new JsonResponse(), $e->getMessage());
         }
@@ -67,28 +69,60 @@ final class UserController extends ApiController
     }
 
     /**
-     * @Route("/learning", methods={"GET"})
+     * @Route("/group", methods={"GET"})
      */
-    public function viewLearning(UserDataServiceInterface $userDataService): JsonResponse
+    public function viewGroups(): JsonResponse
     {
         try {
-            $learning = $userDataService->getLearning($this->getUser());
+            $items = $this->userDataService->getLearningGroups();
         } catch (\Exception $e) {
             return $this->errorExit(new JsonResponse(), $e->getMessage());
         }
 
-        $data = new Item($learning, new UserLearningTransformer());
+        if (!$items) {
+            return new JsonResponse();
+        }
+
+        $data = new Collection($items, new WordGroupTransformer());
 
         return new JsonResponse($this->transformer->createData($data));
     }
 
     /**
-     * @Route("/learning", methods={"POST"})
+     * @Route("/group", methods={"POST"})
      */
-    public function updateLearning(Request $request, UserDataServiceInterface $userDataService): JsonResponse
+    public function updateGroups(Request $request): JsonResponse
     {
         try {
-            $userDataService->updateLearning($this->getUser(), $request);
+            $this->userDataService->updateLearningGroups($request);
+        } catch (\Exception $e) {
+            return $this->errorExit(new JsonResponse(), $e->getMessage());
+        }
+
+        return $this->successExit(new JsonResponse());
+    }
+
+    /**
+     * @Route("/group/{id}", methods={"POST"})
+     */
+    public function addGroup(int $id): JsonResponse
+    {
+        try {
+            $this->userDataService->addLearningGroup($id);
+        } catch (\Exception $e) {
+            return $this->errorExit(new JsonResponse(), $e->getMessage());
+        }
+
+        return $this->successExit(new JsonResponse());
+    }
+
+    /**
+     * @Route("/group/{id}", methods={"DELETE"})
+     */
+    public function removeGroup(int $id): JsonResponse
+    {
+        try {
+            $this->userDataService->removeLearningGroup($id);
         } catch (\Exception $e) {
             return $this->errorExit(new JsonResponse(), $e->getMessage());
         }

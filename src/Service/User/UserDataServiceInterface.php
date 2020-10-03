@@ -2,15 +2,18 @@
 
 namespace App\Service\User;
 
-use App\Entity\UserLearning;
+use App\Collection\WordGroups;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 interface UserDataServiceInterface
 {
-    public function update(UserInterface $user, Request $request): void;
+    public function update(Request $request): void;
 
-    public function getLearning(UserInterface $user): UserLearning;
+    public function getLearningGroups(): ?WordGroups;
 
-    public function updateLearning(UserInterface $user, Request $request): void;
+    public function updateLearningGroups(Request $request): void;
+
+    public function addLearningGroup($id): void;
+
+    public function removeLearningGroup($id): void;
 }

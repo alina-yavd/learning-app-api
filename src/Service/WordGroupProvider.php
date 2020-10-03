@@ -8,21 +8,28 @@ use App\Entity\WordGroup;
 use App\Repository\WordGroupRepository;
 use App\ViewModel\WordGroupViewModel;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Implements WordGroupProviderInterface for entities that are stored in database.
  */
-final class WordGroupProvider implements WordGroupProviderInterface
+class WordGroupProvider implements WordGroupProviderInterface
 {
-    private EntityManagerInterface $em;
-    private WordGroupRepository $repository;
+    protected EntityManagerInterface $em;
+    protected WordGroupRepository $repository;
+    private WordGroupProgressProvider $progress;
+    private Security $security;
 
     public function __construct(
         EntityManagerInterface $em,
-        WordGroupRepository $wordGroupRepository
+        WordGroupRepository $wordGroupRepository,
+        WordGroupProgressProvider $progress,
+        Security $security
     ) {
         $this->em = $em;
         $this->repository = $wordGroupRepository;
+        $this->progress = $progress;
+        $this->security = $security;
     }
 
     /**
@@ -31,8 +38,10 @@ final class WordGroupProvider implements WordGroupProviderInterface
     public function getItem(int $id): WordGroupViewModel
     {
         $item = $this->repository->getById($id);
+        $viewModel = $item->getItem();
+        $viewModel->setProgress($this->getItemProgress($id));
 
-        return $item->getItem();
+        return $viewModel;
     }
 
     /**
@@ -50,7 +59,12 @@ final class WordGroupProvider implements WordGroupProviderInterface
     {
         $items = $this->repository->getByFilter($filter);
 
-        $viewModels = \array_map(fn (WordGroup $item) => $item->getItem(), $items);
+        $viewModels = \array_map(function (WordGroup $item) {
+            $viewModel = $item->getItem();
+            $viewModel->setProgress($this->getItemProgress($item->getId()));
+
+            return $viewModel;
+        }, $items);
 
         return new WordGroups(...$viewModels);
     }
@@ -82,5 +96,16 @@ final class WordGroupProvider implements WordGroupProviderInterface
 
         $this->em->remove($item);
         $this->em->flush();
+    }
+
+    public function getItemProgress(int $id): ?float
+    {
+        $item = $this->repository->getById($id);
+        $user = $this->security->getUser();
+        if (!$user) {
+            return null;
+        }
+
+        return $this->progress->getProgress($user, $item);
     }
 }

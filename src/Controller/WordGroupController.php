@@ -55,7 +55,7 @@ class WordGroupController extends ApiController
         $item = $this->groupProvider->getItem($id);
         $data = new Item($item, new WordGroupWithWordsTransformer());
 
-        return new JsonResponse($this->transformer->createData($data));
+        return new JsonResponse($this->transformer->createData($data)->toArray());
     }
 
     /**

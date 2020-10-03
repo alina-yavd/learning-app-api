@@ -153,6 +153,11 @@ class Word
         return $this;
     }
 
+    public function getProgress(): Collection
+    {
+        return $this->progress;
+    }
+
     public function getItem(): WordViewModel
     {
         return new WordViewModel(
