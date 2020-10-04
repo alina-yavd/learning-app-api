@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\WordTranslation;
 use App\Exception\EntityNotFoundException;
+use App\Service\WordFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,14 +41,23 @@ class WordTranslationRepository extends ServiceEntityRepository
         return $item;
     }
 
-    public function findAllExcludingWord(int $wordId): ?array
+    public function getList(?WordFilter $filter): ?array
     {
-        $qb = $this
-            ->createQueryBuilder('t')
-            ->where('t.word != :word_id')
-            ->setParameter('word_id', $wordId)
-            ->getQuery();
+        $query = $this->createQueryBuilder('t');
 
-        return $qb->getResult();
+        if (null !== $filter) {
+            if ($filter->hasExcludeId()) {
+                $query->andWhere($query->expr()->notIn('t.id', $filter->getExcludeId()));
+            }
+
+            if ($filter->hasLanguage()) {
+                $query->andWhere('t.language = :language')
+                    ->setParameter('language', $filter->getLanguage());
+            }
+        }
+
+        $query = $query->getQuery();
+
+        return $query->getResult();
     }
 }

@@ -2,15 +2,19 @@
 
 namespace App\ViewModel;
 
+use App\Entity\Language;
+
 final class WordTranslationViewModel
 {
     private int $id;
     private string $text;
+    private Language $language;
 
-    public function __construct(int $id, string $text)
+    public function __construct(int $id, string $text, Language $language)
     {
         $this->id = $id;
         $this->text = $text;
+        $this->language = $language;
     }
 
     public function getId(): int
@@ -21,5 +25,10 @@ final class WordTranslationViewModel
     public function getText(): string
     {
         return $this->text;
+    }
+
+    public function getLanguage(): Language
+    {
+        return $this->language;
     }
 }

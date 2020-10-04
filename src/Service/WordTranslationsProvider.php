@@ -13,7 +13,6 @@ use App\ViewModel\WordTranslationViewModel;
 final class WordTranslationsProvider implements WordTranslationsProviderInterface
 {
     private WordTranslationRepository $repository;
-    const TRANSLATIONS_COUNT = 3;
 
     public function __construct(WordTranslationRepository $translationRepository)
     {
@@ -57,23 +56,12 @@ final class WordTranslationsProvider implements WordTranslationsProviderInterfac
     /**
      * {@inheritdoc}
      */
-    public function getItemForWord(int $wordId): WordTranslationViewModel
+    public function getRandomList(int $count, WordFilter $filter): WordTranslations
     {
-        $items = $this->repository->findBy(['word' => $wordId]);
-        $key = \array_rand($items);
-
-        return $items[$key]->getItem();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getListExcludingWord(int $wordId): WordTranslations
-    {
-        $items = $this->repository->findAllExcludingWord($wordId);
+        $items = $this->repository->getList($filter);
 
         $viewModels = [];
-        for ($i = 0; $i < self::TRANSLATIONS_COUNT; ++$i) {
+        for ($i = 0; $i < $count; ++$i) {
             $randomKey = array_rand($items);
             $randomItem = $items[$randomKey];
             $viewModels[] = $randomItem->getItem();
