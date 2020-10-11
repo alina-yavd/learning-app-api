@@ -37,9 +37,7 @@ final class WordGroupViewModel
 
     public function getWords(): ?Collection
     {
-        return $this->words ? $this->words->map(function (Word $item) {
-            return $item->getInfo();
-        }) : null;
+        return $this->words;
     }
 
     public function getLanguage(): Language

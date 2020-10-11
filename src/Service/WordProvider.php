@@ -43,4 +43,9 @@ final class WordProvider implements WordProviderInterface
 
         return new Words(...$viewModels);
     }
+
+    public function getEntity(int $id): Word
+    {
+        return $this->repository->getById($id);
+    }
 }

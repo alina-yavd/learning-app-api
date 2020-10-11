@@ -25,7 +25,7 @@ final class TestTransformer extends TransformerAbstract
     {
         $answers = $test->getAnswers();
 
-        return $this->collection($answers, new WordTranslationTransformer());
+        return $this->collection($answers, new WordTransformer());
     }
 
     public function includeGroup(TestViewModel $test)

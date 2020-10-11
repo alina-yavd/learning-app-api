@@ -26,10 +26,18 @@ class Word
     private string $text;
 
     /**
-     * @ORM\OneToMany(targetEntity=WordTranslation::class, mappedBy="word", orphanRemoval=true)
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToMany(targetEntity=Word::class, mappedBy="translationWords")
      */
     private Collection $translations;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Word", inversedBy="translations")
+     * @ORM\JoinTable(name="translations",
+     *      joinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="translation_word_id", referencedColumnName="id")}
+     *      )
+     */
+    private Collection $translationWords;
 
     /**
      * @ORM\ManyToMany(targetEntity=WordGroup::class, inversedBy="words")
@@ -60,10 +68,11 @@ class Word
     public function __construct(string $text, Language $language)
     {
         $this->translations = new ArrayCollection();
+        $this->translationWords = new ArrayCollection();
         $this->groups = new ArrayCollection();
+        $this->progress = new ArrayCollection();
         $this->text = $text;
         $this->language = $language;
-        $this->progress = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,31 +86,49 @@ class Word
     }
 
     /**
-     * @return Collection|WordTranslation[]
+     * @return Collection|Word[]
      */
     public function getTranslations(): Collection
     {
         return $this->translations;
     }
 
-    public function addTranslation(WordTranslation $translation): self
+    public function addTranslation(Word $translation): self
     {
         if (!$this->translations->contains($translation)) {
             $this->translations[] = $translation;
-            $translation->setWord($this);
+            $translation->addTranslationWord($this);
         }
 
         return $this;
     }
 
-    public function removeTranslation(WordTranslation $translation): self
+    public function removeTranslation(Word $translation): self
     {
         if ($this->translations->contains($translation)) {
             $this->translations->removeElement($translation);
             // set the owning side to null (unless already changed)
-            if ($translation->getWord() === $this) {
-                $translation->setWord(null);
+            if ($translation->getTranslationWords() === $this) {
+                $translation->addTranslationWord(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Word[]
+     */
+    public function getTranslationWords(): Collection
+    {
+        return $this->translationWords;
+    }
+
+    public function addTranslationWord(Word $translationWord): self
+    {
+        if (!$this->translationWords->contains($translationWord)) {
+            $this->translationWords[] = $translationWord;
+            $translationWord->addTranslationWord($this);
         }
 
         return $this;
@@ -127,6 +154,13 @@ class Word
     public function getLanguage(): Language
     {
         return $this->language;
+    }
+
+    public function setLanguage(Language $language): self
+    {
+        $this->language = $language;
+
+        return $this;
     }
 
     public function getCreatedAt(): \DateTimeImmutable
@@ -174,6 +208,19 @@ class Word
         return [
             'id' => $this->getId(),
             'text' => $this->getText(),
+            'language' => $this->getLanguage()->getCode(),
+        ];
+    }
+
+    public function getInfoWithTranslation(?Language $language = null): array
+    {
+        $wordTranslations = (null === $language) ? $this->getTranslations() : $this->getTranslations()->filter(fn (Word $item) => $item->getLanguage() === $language);
+
+        return [
+            'id' => $this->getId(),
+            'text' => $this->getText(),
+            'language' => $this->getLanguage()->getCode(),
+            'translations' => $wordTranslations->map(fn (Word $item) => $item->getInfo())->getValues(),
         ];
     }
 }
