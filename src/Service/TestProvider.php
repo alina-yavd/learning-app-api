@@ -2,11 +2,13 @@
 
 namespace App\Service;
 
-use App\Entity\WordTranslation;
+use App\Entity\Word;
 use App\Event\CheckAnswerEvent;
+use App\Exception\EntityNotFoundException;
 use App\Repository\WordRepository;
-use App\Repository\WordTranslationRepository;
 use App\ViewModel\TestViewModel;
+use App\ViewModel\WordGroupViewModel;
+use App\ViewModel\WordViewModel;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -16,28 +18,25 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 final class TestProvider implements TestProviderInterface
 {
     const ANSWERS_COUNT = 3;
-    private WordTranslationsProviderInterface $translationsProvider;
     private WordGroupProviderInterface $groupProvider;
+    private WordProviderInterface $wordProvider;
     private RandomWordProviderInterface $randomWordProvider;
     private WordRepository $wordRepository;
-    private WordTranslationRepository $wordTranslationRepository;
     private WordFilter $filter;
     private EventDispatcherInterface $dispatcher;
 
     public function __construct(
-        WordTranslationsProviderInterface $translationsProvider,
         WordGroupProviderInterface $groupProvider,
+        WordProviderInterface $wordProvider,
         RandomWordProviderInterface $randomWordProvider,
         WordRepository $wordRepository,
-        WordTranslationRepository $wordTranslationRepository,
         WordFilter $filter,
         EventDispatcherInterface $dispatcher
     ) {
-        $this->translationsProvider = $translationsProvider;
         $this->groupProvider = $groupProvider;
+        $this->wordProvider = $wordProvider;
         $this->randomWordProvider = $randomWordProvider;
         $this->wordRepository = $wordRepository;
-        $this->wordTranslationRepository = $wordTranslationRepository;
         $this->filter = $filter;
         $this->dispatcher = $dispatcher;
     }
@@ -49,21 +48,17 @@ final class TestProvider implements TestProviderInterface
     {
         if ($groupId) {
             $group = $this->groupProvider->getItem($groupId);
-            $translationLang = $group->getTranslation();
-            $this->filter->setLanguage($translationLang);
         } else {
             $group = null;
-            $translationLang = null;
         }
 
         $word = $this->randomWordProvider->getItem($group);
-        $translations = $word->getTranslations()->filter(fn (WordTranslation $item) => $item->getLanguage() === $translationLang);
-        $translation = $translations->first()->getItem();
+        $translation = $this->getTranslation($word, $group);
 
-        $this->filter->setExcludeId($word->getId());
+        $this->filter->setLanguage($translation->getLanguage());
+        $this->filter->setExcludeIds([$word->getId(), $translation->getId()]);
 
-        $answers = $this->translationsProvider->getRandomList(self::ANSWERS_COUNT, $this->filter);
-
+        $answers = $this->randomWordProvider->getRandomList(self::ANSWERS_COUNT, $this->filter);
         $answers->add($translation);
         $answers->shuffle();
 
@@ -75,18 +70,39 @@ final class TestProvider implements TestProviderInterface
      */
     public function checkAnswer(int $wordId, int $answerId, ?UserInterface $user = null): bool
     {
-        $answer = $this->translationsProvider->getItem($answerId);
-        $answers = $this->translationsProvider->getItemsForWord($wordId);
+        $answer = $this->wordProvider->getEntity($answerId);
+        $answers = $this->wordProvider->getEntity($wordId);
 
-        $passed = $answers->contains($answer);
+        $passed = $answers->getTranslations()->contains($answer);
 
         if ($user) {
             $word = $this->wordRepository->getById($wordId);
-            $translation = $this->wordTranslationRepository->getById($answerId);
+            $translation = $this->wordRepository->getById($answerId);
             $event = new CheckAnswerEvent($user, $word, $translation, $passed);
             $this->dispatcher->dispatch($event, 'tests.check_answer');
         }
 
         return $passed;
+    }
+
+    protected function getTranslation(WordViewModel $word, ?WordGroupViewModel $group): WordViewModel
+    {
+        $translations = $word->getTranslations();
+
+        if (null !== $group) {
+            $translations = $translations->filter(fn (Word $item) => $item->getLanguage() === $group->getTranslation());
+        } else {
+            $translations = $translations->filter(fn (Word $item) => $item->getLanguage() !== $word->getLanguage());
+        }
+
+        $keys = $translations->getKeys();
+        $randomKey = \array_rand($keys);
+        $translation = $translations->get($keys[$randomKey])->getItem();
+
+        if (null === $translations) {
+            throw EntityNotFoundException::general('Word');
+        }
+
+        return $translation;
     }
 }

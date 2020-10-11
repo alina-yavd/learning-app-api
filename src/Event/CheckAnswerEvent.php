@@ -3,7 +3,6 @@
 namespace App\Event;
 
 use App\Entity\Word;
-use App\Entity\WordTranslation;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -11,10 +10,10 @@ class CheckAnswerEvent extends EventDispatcher
 {
     private UserInterface $user;
     private Word $word;
-    private WordTranslation $answer;
+    private Word $answer;
     private bool $passed;
 
-    public function __construct(UserInterface $user, Word $word, WordTranslation $answer, bool $passed)
+    public function __construct(UserInterface $user, Word $word, Word $answer, bool $passed)
     {
         parent::__construct();
         $this->user = $user;
@@ -33,7 +32,7 @@ class CheckAnswerEvent extends EventDispatcher
         return $this->word;
     }
 
-    public function getAnswer(): WordTranslation
+    public function getAnswer(): Word
     {
         return $this->answer;
     }

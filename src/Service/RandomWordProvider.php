@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Collection\Words;
+use App\Entity\Word;
 use App\Repository\WordGroupRepository;
 use App\Repository\WordRepository;
 use App\ViewModel\WordGroupViewModel;
@@ -29,6 +31,24 @@ final class RandomWordProvider implements RandomWordProviderInterface
         return $this->getWordWithAnswers($group);
     }
 
+    public function getRandomList(int $count, WordFilter $filter): ?Words
+    {
+        $items = $this->repository->getList($filter);
+        if (empty($items)) {
+            return null;
+        }
+
+        $viewModels = [];
+        for ($i = 0; $i < $count; ++$i) {
+            $randomKey = \array_rand($items);
+            $randomItem = $items[$randomKey];
+            $viewModels[] = $randomItem->getItem();
+            unset($items[$randomKey]);
+        }
+
+        return new Words(...$viewModels);
+    }
+
     private function getWordWithAnswers(?WordGroupViewModel $group): WordViewModel
     {
         if ($group) {
@@ -54,8 +74,8 @@ final class RandomWordProvider implements RandomWordProviderInterface
     private function getRandomItemInGroup(WordGroupViewModel $group): WordViewModel
     {
         $group = $this->groupRepository->getById($group->getId());
-        $words = $group->getWords()->toArray();
-        $key = \array_rand($words);
+        $words = $group->getWords()->filter(fn (Word $item) => $item->getLanguage() === $group->getLanguage());
+        $key = \array_rand($words->toArray());
 
         return $words[$key]->getItem();
     }

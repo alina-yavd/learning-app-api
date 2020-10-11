@@ -41,11 +41,6 @@ class Language
     private Collection $words;
 
     /**
-     * @ORM\OneToMany(targetEntity=WordTranslation::class, mappedBy="language", orphanRemoval=true)
-     */
-    private Collection $translations;
-
-    /**
      * @ORM\OneToMany(targetEntity=WordGroup::class, mappedBy="language")
      */
     private Collection $wordGroups;
@@ -53,7 +48,6 @@ class Language
     public function __construct(string $code, string $name)
     {
         $this->words = new ArrayCollection();
-        $this->translations = new ArrayCollection();
         $this->wordGroups = new ArrayCollection();
         $this->code = $code;
         $this->name = $name;
@@ -99,37 +93,6 @@ class Language
             // set the owning side to null (unless already changed)
             if ($word->getLanguage() === $this) {
                 $word->setLanguage(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|WordTranslation[]
-     */
-    public function getTranslations(): ?Collection
-    {
-        return $this->translations;
-    }
-
-    public function addTranslation(WordTranslation $wordTranslation): self
-    {
-        if (!$this->translations->contains($wordTranslation)) {
-            $this->translations[] = $wordTranslation;
-            $wordTranslation->setLanguage($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTranslation(WordTranslation $wordTranslation): self
-    {
-        if ($this->translations->contains($wordTranslation)) {
-            $this->translations->removeElement($wordTranslation);
-            // set the owning side to null (unless already changed)
-            if ($wordTranslation->getLanguage() === $this) {
-                $wordTranslation->setLanguage(null);
             }
         }
 

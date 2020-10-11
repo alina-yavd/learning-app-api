@@ -38,4 +38,11 @@ final class Words implements \IteratorAggregate
     {
         return in_array($value, $this->words, $strict);
     }
+
+    public function shuffle()
+    {
+        \shuffle($this->words);
+
+        return $this->words;
+    }
 }

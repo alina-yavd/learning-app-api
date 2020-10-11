@@ -6,45 +6,45 @@ use App\Entity\Language;
 
 final class WordFilter
 {
-    private ?int $includeId;
-    private ?int $excludeId;
+    private ?array $includeIds;
+    private ?array $excludeIds;
     private ?Language $language;
 
     public function __construct()
     {
-        $this->includeId = null;
-        $this->excludeId = null;
+        $this->includeIds = null;
+        $this->excludeIds = null;
         $this->language = null;
     }
 
-    public function hasIncludeId(): bool
+    public function hasIncludeIds(): bool
     {
-        return null !== $this->includeId;
+        return !empty($this->includeIds);
     }
 
-    public function getIncludeId(): ?int
+    public function getIncludeIds(): ?array
     {
-        return $this->includeId;
+        return $this->includeIds;
     }
 
-    public function setIncludeId(?int $includeId): void
+    public function setIncludeIds(?array $includeIds): void
     {
-        $this->includeId = $includeId;
+        $this->includeIds = $includeIds;
     }
 
-    public function hasExcludeId(): bool
+    public function hasExcludeIds(): bool
     {
-        return null !== $this->excludeId;
+        return !empty($this->excludeIds);
     }
 
-    public function getExcludeId(): ?int
+    public function getExcludeIds(): ?array
     {
-        return $this->excludeId;
+        return $this->excludeIds;
     }
 
-    public function setExcludeId(int $id): void
+    public function setExcludeIds(array $ids): void
     {
-        $this->excludeId = $id;
+        $this->excludeIds = $ids;
     }
 
     public function hasLanguage(): bool

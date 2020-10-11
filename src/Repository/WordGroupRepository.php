@@ -74,7 +74,7 @@ class WordGroupRepository extends ServiceEntityRepository
                 ->setParameter('language', $filter->getLanguage());
         }
 
-        if ($filter->hasLanguage() && $filter->hasTranslation()) {
+        if ($filter->hasTranslation()) {
             $query->andWhere('g.translation = :translation')
                 ->setParameter('translation', $filter->getTranslation());
         }

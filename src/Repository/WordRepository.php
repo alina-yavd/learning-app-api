@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Word;
 use App\Exception\EntityNotFoundException;
+use App\Service\WordFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -55,5 +56,29 @@ class WordRepository extends ServiceEntityRepository
         $randomKey = array_rand($wordIds);
 
         return $this->find($wordIds[$randomKey]['id']);
+    }
+
+    public function getList(?WordFilter $filter): ?array
+    {
+        $query = $this->createQueryBuilder('w');
+
+        if (null !== $filter) {
+            if ($filter->hasIncludeIds()) {
+                $query->andWhere($query->expr()->in('w.id', $filter->getIncludeIds()));
+            }
+
+            if ($filter->hasExcludeIds()) {
+                $query->andWhere($query->expr()->notIn('w.id', $filter->getExcludeIds()));
+            }
+
+            if ($filter->hasLanguage()) {
+                $query->andWhere('w.language = :language')
+                    ->setParameter('language', $filter->getLanguage());
+            }
+        }
+
+        $query = $query->getQuery();
+
+        return $query->getResult();
     }
 }

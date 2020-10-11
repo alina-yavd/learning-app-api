@@ -13,7 +13,7 @@ final class WordViewModel
     private ?Collection $translations;
     private ?Collection $groups;
 
-    public function __construct(int $id, string $text, Language $language, Collection $translations = null, Collection $groups = null)
+    public function __construct(int $id, string $text, Language $language, ?Collection $translations = null, ?Collection $groups = null)
     {
         $this->id = $id;
         $this->text = $text;
