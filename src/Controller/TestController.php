@@ -90,7 +90,7 @@ class TestController extends ApiController
             return $this->errorExit($response, $e->getMessage(), 404);
         }
 
-        $result = $this->testProvider->checkAnswer($wordId, $answerId);
+        $result = $this->testProvider->checkAnswer($wordId, $answerId, $this->getUser());
         $wordData = new Item($word, new WordTransformer());
         $json = [
             'word' => $this->transformer->createData($wordData),

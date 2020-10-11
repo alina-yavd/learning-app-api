@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -54,10 +56,22 @@ class User implements UserInterface
      */
     private ?string $description;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UserProgress::class, mappedBy="user", orphanRemoval=true)
+     */
+    private Collection $progress;
+
+    /**
+     * @ORM\OneToOne(targetEntity=UserLearning::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private ?UserLearning $learning;
+
     public function __construct(string $email)
     {
         $this->email = $email;
         $this->registeredAt = new \DateTimeImmutable();
+        $this->progress = new ArrayCollection();
+        $this->learning = null;
     }
 
     /**
@@ -168,6 +182,49 @@ class User implements UserInterface
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UserProgress[]
+     */
+    public function getProgress(): Collection
+    {
+        return $this->progress;
+    }
+
+    public function addProgress(UserProgress $progress): self
+    {
+        if (!$this->progress->contains($progress)) {
+            $this->progress[] = $progress;
+        }
+
+        return $this;
+    }
+
+    public function removeProgress(UserProgress $progress): self
+    {
+        if ($this->progress->contains($progress)) {
+            $this->progress->removeElement($progress);
+        }
+
+        return $this;
+    }
+
+    public function getLearning(): ?UserLearning
+    {
+        return $this->learning;
+    }
+
+    public function setLearning(UserLearning $learning): self
+    {
+        $this->learning = $learning;
+
+        // set the owning side of the relation if necessary
+        if ($learning->getUser() !== $this) {
+            $learning->setUser($this);
+        }
 
         return $this;
     }

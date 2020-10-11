@@ -12,6 +12,7 @@ final class WordGroupWithWordsTransformer extends WordGroupTransformer
             'id' => $group->getId(),
             'name' => $group->getName(),
             'words' => $group->getWords()->toArray(),
+            'progress' => $group->getProgress(),
         ];
     }
 }

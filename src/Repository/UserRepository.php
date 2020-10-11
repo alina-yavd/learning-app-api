@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\DTO\UserDataDTO;
 use App\DTO\UserDTO;
 use App\Entity\User;
+use App\Entity\UserLearning;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -64,6 +65,26 @@ final class UserRepository extends ServiceEntityRepository implements PasswordUp
         return $user;
     }
 
+    public function updateUserGroups(UserInterface $user, ?array $groups): UserLearning
+    {
+        $learning = $this->getUserLearning($user);
+
+        $learning->removeWordGroups();
+        $learning->removeLanguages();
+        if ($groups) {
+            foreach ($groups as $group) {
+                $learning->addWordGroup($group);
+                $learning->addLanguage($group->getLanguage());
+            }
+        }
+
+        $this->_em->persist($learning);
+        $this->_em->persist($user);
+        $this->_em->flush();
+
+        return $learning;
+    }
+
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
@@ -76,5 +97,15 @@ final class UserRepository extends ServiceEntityRepository implements PasswordUp
         $user->setPassword($newEncodedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    protected function getUserLearning(UserInterface $user): UserLearning
+    {
+        $learning = $user->getLearning();
+        if (null === $learning) {
+            $learning = new UserLearning($user);
+        }
+
+        return $learning;
     }
 }

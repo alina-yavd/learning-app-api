@@ -7,6 +7,7 @@ use App\Repository\LanguageRepository;
 
 final class WordGroupFilter
 {
+    private ?array $ids;
     private ?Language $language;
     private ?Language $translation;
     private LanguageRepository $languageRepository;
@@ -14,8 +15,24 @@ final class WordGroupFilter
     public function __construct(LanguageRepository $languageRepository)
     {
         $this->languageRepository = $languageRepository;
+        $this->ids = null;
         $this->language = null;
         $this->translation = null;
+    }
+
+    public function hasIds(): bool
+    {
+        return !empty($this->ids);
+    }
+
+    public function getIds(): ?array
+    {
+        return $this->ids;
+    }
+
+    public function setIds(array $ids): void
+    {
+        $this->ids = $ids;
     }
 
     public function hasLanguage(): bool
