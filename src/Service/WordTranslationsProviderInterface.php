@@ -35,16 +35,9 @@ interface WordTranslationsProviderInterface
     public function getItemsForWord(int $wordId): WordTranslations;
 
     /**
-     * Finds one random word translation for given word.
-     *
-     * @return WordTranslationViewModel Word translation view model
-     */
-    public function getItemForWord(int $wordId): WordTranslationViewModel;
-
-    /**
-     * Finds some word translations that are not associated with given word.
+     * Finds given number of word translations by filter.
      *
      * @return WordTranslations Word translation view model collection
      */
-    public function getListExcludingWord(int $wordId): WordTranslations;
+    public function getRandomList(int $count, WordFilter $filter): WordTranslations;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\WordTranslation;
 use App\Event\CheckAnswerEvent;
 use App\Repository\WordRepository;
 use App\Repository\WordTranslationRepository;
@@ -14,29 +15,30 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 final class TestProvider implements TestProviderInterface
 {
-    private WordProviderInterface $wordProvider;
+    const ANSWERS_COUNT = 3;
     private WordTranslationsProviderInterface $translationsProvider;
     private WordGroupProviderInterface $groupProvider;
     private RandomWordProviderInterface $randomWordProvider;
     private WordRepository $wordRepository;
     private WordTranslationRepository $wordTranslationRepository;
+    private WordFilter $filter;
     private EventDispatcherInterface $dispatcher;
 
     public function __construct(
-        WordProviderInterface $wordProvider,
         WordTranslationsProviderInterface $translationsProvider,
         WordGroupProviderInterface $groupProvider,
         RandomWordProviderInterface $randomWordProvider,
         WordRepository $wordRepository,
         WordTranslationRepository $wordTranslationRepository,
+        WordFilter $filter,
         EventDispatcherInterface $dispatcher
     ) {
-        $this->wordProvider = $wordProvider;
         $this->translationsProvider = $translationsProvider;
         $this->groupProvider = $groupProvider;
         $this->randomWordProvider = $randomWordProvider;
         $this->wordRepository = $wordRepository;
         $this->wordTranslationRepository = $wordTranslationRepository;
+        $this->filter = $filter;
         $this->dispatcher = $dispatcher;
     }
 
@@ -47,13 +49,20 @@ final class TestProvider implements TestProviderInterface
     {
         if ($groupId) {
             $group = $this->groupProvider->getItem($groupId);
+            $translationLang = $group->getTranslation();
+            $this->filter->setLanguage($translationLang);
         } else {
             $group = null;
+            $translationLang = null;
         }
 
         $word = $this->randomWordProvider->getItem($group);
-        $translation = $this->translationsProvider->getItemForWord($word->getId());
-        $answers = $this->translationsProvider->getListExcludingWord($word->getId());
+        $translations = $word->getTranslations()->filter(fn (WordTranslation $item) => $item->getLanguage() === $translationLang);
+        $translation = $translations->first()->getItem();
+
+        $this->filter->setExcludeId($word->getId());
+
+        $answers = $this->translationsProvider->getRandomList(self::ANSWERS_COUNT, $this->filter);
 
         $answers->add($translation);
         $answers->shuffle();

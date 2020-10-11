@@ -12,6 +12,7 @@ final class WordTranslationTransformer extends TransformerAbstract
         return [
             'id' => $translation->getId(),
             'text' => $translation->getText(),
+            'language' => $translation->getLanguage()->getCode(),
         ];
     }
 }

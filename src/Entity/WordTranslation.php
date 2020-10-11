@@ -113,7 +113,8 @@ class WordTranslation
     {
         return new WordTranslationViewModel(
             $this->id,
-            $this->text
+            $this->text,
+            $this->language
         );
     }
 
@@ -122,6 +123,7 @@ class WordTranslation
         return [
             'id' => $this->getId(),
             'text' => $this->getText(),
+            'language' => $this->getLanguage()->getCode(),
         ];
     }
 }

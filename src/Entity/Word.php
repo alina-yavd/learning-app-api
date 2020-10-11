@@ -163,6 +163,7 @@ class Word
         return new WordViewModel(
             $this->id,
             $this->text,
+            $this->language,
             $this->translations,
             $this->groups
         );
