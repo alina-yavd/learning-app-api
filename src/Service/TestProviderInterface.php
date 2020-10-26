@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\ViewModel\TestViewModel;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * TestProviderInterface represents the interface for word tests implementations.
@@ -20,5 +21,5 @@ interface TestProviderInterface
     /**
      * Checks if the given answer belongs to the given word.
      */
-    public function checkAnswer(int $wordId, int $answerId): bool;
+    public function checkAnswer(int $wordId, int $answerId, ?UserInterface $user = null): bool;
 }

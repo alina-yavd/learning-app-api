@@ -8,6 +8,7 @@ use App\Service\TestProviderInterface;
 use App\Service\WordGroupProviderInterface;
 use App\Service\WordProviderInterface;
 use App\Transformer\TestTransformer;
+use App\Transformer\WordGroupTransformer;
 use App\Transformer\WordTransformer;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
@@ -90,10 +91,19 @@ class TestController extends ApiController
             return $this->errorExit($response, $e->getMessage(), 404);
         }
 
-        $result = $this->testProvider->checkAnswer($wordId, $answerId);
+        $result = $this->testProvider->checkAnswer($wordId, $answerId, $this->getUser());
         $wordData = new Item($word, new WordTransformer());
+
+        try {
+            $group = $this->groupProvider->getItem($request->request->getInt('groupId'));
+            $groupData = new Item($group, new WordGroupTransformer());
+        } catch (EntityNotFoundException $e) {
+            $groupData = null;
+        }
+
         $json = [
             'word' => $this->transformer->createData($wordData),
+            'group' => $groupData ? $this->transformer->createData($groupData) : null,
             'result' => $result,
         ];
 

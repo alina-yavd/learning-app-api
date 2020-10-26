@@ -14,6 +14,7 @@ class WordGroupTransformer extends TransformerAbstract
         return [
             'id' => $group->getId(),
             'name' => $group->getName(),
+            'progress' => $group->getProgress(),
         ];
     }
 

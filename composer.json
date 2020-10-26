@@ -15,6 +15,7 @@
         "league/fractal": "^0.19.2",
         "nelmio/api-doc-bundle": "^3.0",
         "nelmio/cors-bundle": "^2.1",
+        "sensio/framework-extra-bundle": "^5.6@dev",
         "sentry/sentry-symfony": "dev-master",
         "suramon/simple-xml-reader": "^1.2",
         "symfony/apache-pack": "^1.0",
@@ -25,6 +26,7 @@
         "symfony/framework-bundle": "5.1.*",
         "symfony/http-foundation": "5.1.*",
         "symfony/mime": "5.1.*",
+        "symfony/security-bundle": "5.1.*",
         "symfony/twig-bundle": "5.1.*",
         "symfony/validator": "5.1.*",
         "symfony/yaml": "5.1.*"

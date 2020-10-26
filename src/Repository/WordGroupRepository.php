@@ -65,16 +65,17 @@ class WordGroupRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('g');
 
+        if ($filter->hasIds()) {
+            $query->andWhere($query->expr()->in('g.id', $filter->getIds()));
+        }
+
         if ($filter->hasLanguage()) {
-            $query->where('g.language = :language')
+            $query->andWhere('g.language = :language')
                 ->setParameter('language', $filter->getLanguage());
         }
 
-        if ($filter->hasLanguage() && $filter->hasTranslation()) {
+        if ($filter->hasTranslation()) {
             $query->andWhere('g.translation = :translation')
-                ->setParameter('translation', $filter->getTranslation());
-        } elseif ($filter->hasTranslation()) {
-            $query->where('g.translation = :translation')
                 ->setParameter('translation', $filter->getTranslation());
         }
 

@@ -13,6 +13,7 @@ final class WordGroupViewModel
     private Language $language;
     private Language $translation;
     private ?Collection $words;
+    private float $progress;
 
     public function __construct(int $id, string $name, Language $language, Language $translation, Collection $words = null)
     {
@@ -21,6 +22,7 @@ final class WordGroupViewModel
         $this->language = $language;
         $this->translation = $translation;
         $this->words = $words;
+        $this->progress = 0;
     }
 
     public function getId(): int
@@ -35,9 +37,7 @@ final class WordGroupViewModel
 
     public function getWords(): ?Collection
     {
-        return $this->words ? $this->words->map(function (Word $item) {
-            return $item->getInfo();
-        }) : null;
+        return $this->words;
     }
 
     public function getLanguage(): Language
@@ -48,5 +48,15 @@ final class WordGroupViewModel
     public function getTranslation(): Language
     {
         return $this->translation;
+    }
+
+    public function getProgress(): float
+    {
+        return $this->progress;
+    }
+
+    public function setProgress(?float $progress): void
+    {
+        $this->progress = (int) $progress;
     }
 }
